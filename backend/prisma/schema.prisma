@@ -1,0 +1,258 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  fullName      String    @map("full_name")
+  phoneNumber   String?   @map("phone_number")
+  profilePhoto  String?   @map("profile_photo")
+  
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true) @map("is_active")
+  isVerified    Boolean   @default(false) @map("is_verified")
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  documents     Document[]
+  applications  Application[]
+  appointments  Appointment[]
+  notifications Notification[]
+  chatHistory   ChatMessage[]
+  passports     Passport[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Document {
+  id            String    @id @default(uuid())
+  userId        String    @map("user_id")
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  applicationId String?   @map("application_id")
+  
+  documentType  String    @map("document_type")
+  country       String?
+  
+  fileName      String    @map("file_name")
+  fileUrl       String    @map("file_url")
+  fileSize      Int       @map("file_size")
+  mimeType      String    @map("mime_type")
+  
+  expiryDate    DateTime? @map("expiry_date")
+  status        DocumentStatus @default(ACTIVE)
+  
+  extractedData Json?     @map("extracted_data")
+  
+  uploadedAt    DateTime  @default(now()) @map("uploaded_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  passport      Passport?
+  
+  @@index([userId])
+  @@index([applicationId])
+  @@index([country])
+  @@index([documentType])
+  @@map("documents")
+}
+
+enum DocumentStatus {
+  ACTIVE
+  EXPIRED
+  EXPIRING_SOON
+}
+
+model Application {
+  id                String            @id @default(uuid())
+  userId            String            @map("user_id")
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  country           String
+  visaType          String            @map("visa_type")
+  
+  status            ApplicationStatus @default(PREPARING_DOCUMENTS)
+  progressPercentage Int              @default(0) @map("progress_percentage")
+  
+  appointmentDate   DateTime?         @map("appointment_date")
+  consulateLocation String?           @map("consulate_location")
+  
+  documentsReadyAt  DateTime?         @map("documents_ready_at")
+  appointmentTakenAt DateTime?        @map("appointment_taken_at")
+  submittedAt       DateTime?         @map("submitted_at")
+  completedAt       DateTime?         @map("completed_at")
+  
+  notes             String?
+  
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  
+  appointments      Appointment[]
+  
+  @@index([userId])
+  @@index([status])
+  @@map("applications")
+}
+
+enum ApplicationStatus {
+  PREPARING_DOCUMENTS
+  APPOINTMENT_TAKEN
+  AT_CONSULATE
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+model Appointment {
+  id              String           @id @default(uuid())
+  userId          String           @map("user_id")
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  applicationId   String?          @map("application_id")
+  application     Application?     @relation(fields: [applicationId], references: [id])
+  
+  appointmentType AppointmentType  @map("appointment_type")
+  appointmentDate DateTime         @map("appointment_date")
+  location        String
+  
+  status          AppointmentStatus @default(PENDING)
+  notes           String?
+  
+  reminderSent    Boolean          @default(false) @map("reminder_sent")
+  
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  
+  @@index([userId])
+  @@index([appointmentDate])
+  @@map("appointments")
+}
+
+enum AppointmentType {
+  VISA
+  PASSPORT
+  BIOMETRIC
+  INTERVIEW
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  message     String
+  type        NotificationType
+  
+  isRead      Boolean          @default(false) @map("is_read")
+  actionUrl   String?          @map("action_url")
+  
+  createdAt   DateTime         @default(now()) @map("created_at")
+  
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  APPLICATION_UPDATE
+  APPOINTMENT_REMINDER
+  DOCUMENT_WARNING
+  SYSTEM
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  message   String
+  sender    ChatSender
+  
+  metadata  Json?
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([userId, createdAt])
+  @@map("chat_messages")
+}
+
+enum ChatSender {
+  USER
+  AI
+}
+
+model Passport {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  passportNumber  String    @unique @map("passport_number")
+  issueDate       DateTime  @map("issue_date")
+  expiryDate      DateTime  @map("expiry_date")
+  issuingCountry  String    @map("issuing_country")
+  
+  documentId      String?   @unique @map("document_id")
+  document        Document? @relation(fields: [documentId], references: [id])
+  
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  @@index([userId])
+  @@index([expiryDate])
+  @@map("passports")
+}
+
+model UploadSession {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  
+  fileName      String   @map("file_name")
+  fileSize      Int      @map("file_size")
+  chunkSize     Int      @map("chunk_size")
+  totalChunks   Int      @map("total_chunks")
+  uploadedChunks Int     @default(0) @map("uploaded_chunks")
+  
+  documentType  String   @map("document_type")
+  country       String?
+  
+  status        UploadStatus @default(IN_PROGRESS)
+  
+  s3Key         String?  @map("s3_key")
+  uploadId      String?  @map("upload_id")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  expiresAt     DateTime @map("expires_at")
+  
+  @@index([userId])
+  @@map("upload_sessions")
+}
+
+enum UploadStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+
+
+
