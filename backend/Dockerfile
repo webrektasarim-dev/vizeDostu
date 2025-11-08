@@ -1,6 +1,9 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
+
+# Install OpenSSL
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
 
 # Copy package files
 COPY package*.json ./
@@ -19,7 +22,10 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20-slim
+
+# Install OpenSSL
+RUN apt-get update -y && apt-get install -y openssl libssl-dev && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
