@@ -1,29 +1,100 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Modal, TouchableOpacity } from 'react-native';
-import { Text, Card, Button, TextInput, Chip } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Alert, Modal, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { Text, Card, Button, TextInput, Chip, ActivityIndicator } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
+import * as DocumentPicker from 'expo-document-picker';
+import { PassportService } from '../../services/passport.service';
 
 export default function PassportScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasPassport, setHasPassport] = useState(false);
-  const [passport, setPassport] = useState({
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [passport, setPassport] = useState<any>(null);
+  const [editForm, setEditForm] = useState({
     passportNumber: '',
     expiryDate: '',
     nationality: 'Türkiye',
     fullName: '',
+    imageUri: '',
   });
-  const [editForm, setEditForm] = useState(passport);
 
-  const handleSave = () => {
-    setPassport(editForm);
-    setModalVisible(false);
-    Alert.alert('Başarılı', 'Pasaport bilgileriniz kaydedildi');
+  // Ekrana gelince veriyi yükle
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPassport();
+    }, [])
+  );
+
+  const loadPassport = async () => {
+    try {
+      setLoading(true);
+      const data = await PassportService.getPassport();
+      if (data) {
+        setPassport(data);
+      }
+    } catch (error) {
+      console.error('Load passport error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const daysUntilExpiry = Math.floor(
-    (new Date('2028-05-15').getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const handlePickImage = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['image/*'],
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setEditForm({ ...editForm, imageUri: result.assets[0].uri });
+        Alert.alert('Başarılı', 'Görsel seçildi');
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Görsel seçilemedi');
+    }
+  };
+
+  const handleSave = async () => {
+    if (!editForm.passportNumber || !editForm.fullName || !editForm.expiryDate) {
+      Alert.alert('Hata', 'Lütfen tüm alanları doldurun');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const savedPassport = await PassportService.createOrUpdatePassport({
+        passportNumber: editForm.passportNumber,
+        fullName: editForm.fullName,
+        nationality: editForm.nationality,
+        expiryDate: editForm.expiryDate,
+        imageUri: editForm.imageUri,
+      });
+      
+      setPassport(savedPassport);
+      setModalVisible(false);
+      Alert.alert('✅ Başarılı', 'Pasaport bilgileriniz kaydedildi');
+    } catch (error: any) {
+      Alert.alert('Hata', error.response?.data?.message || 'Pasaport kaydedilemedi');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const daysUntilExpiry = passport?.expiryDate
+    ? Math.floor((new Date(passport.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#43e97b" />
+        <Text style={styles.loadingText}>Pasaport bilgileri yükleniyor...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -43,8 +114,18 @@ export default function PassportScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {hasPassport ? (
+        {passport ? (
           <>
+            {/* Pasaport Görseli */}
+            {passport.imageUrl && (
+              <Card style={styles.imageViewCard}>
+                <Card.Content>
+                  <Text style={styles.imageTitle}>Pasaport Görseli</Text>
+                  <Image source={{ uri: passport.imageUrl }} style={styles.passportImageView} />
+                </Card.Content>
+              </Card>
+            )}
+
             <Card style={styles.card}>
               <Card.Content>
                 <View style={styles.statusContainer}>
@@ -97,7 +178,13 @@ export default function PassportScreen() {
             <Button
               mode="contained"
               onPress={() => {
-                setEditForm(passport);
+                setEditForm({
+                  passportNumber: passport.passportNumber || '',
+                  expiryDate: passport.expiryDate || '',
+                  nationality: passport.nationality || 'Türkiye',
+                  fullName: passport.fullName || '',
+                  imageUri: passport.imageUrl || '',
+                });
                 setModalVisible(true);
               }}
               style={styles.button}
@@ -147,55 +234,100 @@ export default function PassportScreen() {
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>📖 Pasaport Bilgileri</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Icon name="close" size={28} color="#757575" />
-              </TouchableOpacity>
-            </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <TouchableOpacity 
+            style={styles.modalOverlay} 
+            activeOpacity={1}
+            onPress={() => setModalVisible(false)}
+          >
+            <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+              <ScrollView
+                style={styles.modalContent}
+                contentContainerStyle={styles.modalScrollContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>📖 Pasaport Bilgileri</Text>
+                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <Icon name="close" size={28} color="#757575" />
+                  </TouchableOpacity>
+                </View>
 
-            <TextInput
-              label="Ad Soyad"
-              value={editForm.fullName}
-              onChangeText={(text) => setEditForm({ ...editForm, fullName: text })}
-              mode="outlined"
-              style={styles.input}
-            />
-            <TextInput
-              label="Pasaport No"
-              value={editForm.passportNumber}
-              onChangeText={(text) => setEditForm({ ...editForm, passportNumber: text })}
-              mode="outlined"
-              style={styles.input}
-            />
-            <TextInput
-              label="Uyruk"
-              value={editForm.nationality}
-              onChangeText={(text) => setEditForm({ ...editForm, nationality: text })}
-              mode="outlined"
-              style={styles.input}
-            />
-            <TextInput
-              label="Geçerlilik Tarihi (YYYY-MM-DD)"
-              value={editForm.expiryDate}
-              onChangeText={(text) => setEditForm({ ...editForm, expiryDate: text })}
-              mode="outlined"
-              placeholder="2028-12-31"
-              style={styles.input}
-            />
+                {/* Pasaport Görseli */}
+                <Card style={styles.imageCard}>
+                  <Card.Content style={styles.imageContent}>
+                    {editForm.imageUri ? (
+                      <Image source={{ uri: editForm.imageUri }} style={styles.passportImage} />
+                    ) : (
+                      <View style={styles.noImage}>
+                        <Icon name="image-off" size={48} color="#BDBDBD" />
+                        <Text style={styles.noImageText}>Pasaport görseli yok</Text>
+                      </View>
+                    )}
+                    <Button
+                      mode="outlined"
+                      onPress={handlePickImage}
+                      style={styles.uploadButton}
+                      icon="camera"
+                    >
+                      {editForm.imageUri ? 'Görseli Değiştir' : 'Görsel Yükle'}
+                    </Button>
+                  </Card.Content>
+                </Card>
 
-            <Button
-              mode="contained"
-              onPress={handleSave}
-              style={styles.saveButton}
-              icon="check"
-            >
-              Kaydet
-            </Button>
-          </View>
-        </View>
+                <TextInput
+                  label="Ad Soyad"
+                  value={editForm.fullName}
+                  onChangeText={(text) => setEditForm({ ...editForm, fullName: text })}
+                  mode="outlined"
+                  style={styles.input}
+                  left={<TextInput.Icon icon="account" />}
+                />
+                <TextInput
+                  label="Pasaport No"
+                  value={editForm.passportNumber}
+                  onChangeText={(text) => setEditForm({ ...editForm, passportNumber: text })}
+                  mode="outlined"
+                  style={styles.input}
+                  left={<TextInput.Icon icon="card-account-details" />}
+                />
+                <TextInput
+                  label="Uyruk"
+                  value={editForm.nationality}
+                  onChangeText={(text) => setEditForm({ ...editForm, nationality: text })}
+                  mode="outlined"
+                  style={styles.input}
+                  left={<TextInput.Icon icon="flag" />}
+                />
+                <TextInput
+                  label="Geçerlilik Tarihi (YYYY-MM-DD)"
+                  value={editForm.expiryDate}
+                  onChangeText={(text) => setEditForm({ ...editForm, expiryDate: text })}
+                  mode="outlined"
+                  placeholder="2028-12-31"
+                  style={styles.input}
+                  left={<TextInput.Icon icon="calendar" />}
+                />
+
+                <Button
+                  mode="contained"
+                  onPress={handleSave}
+                  loading={saving}
+                  disabled={saving}
+                  style={styles.saveButton}
+                  icon="check"
+                  buttonColor="#43e97b"
+                >
+                  Kaydet
+                </Button>
+              </ScrollView>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -205,6 +337,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#757575',
   },
   headerGradient: {
     paddingTop: 60,
@@ -228,6 +371,23 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 100,
+  },
+  imageViewCard: {
+    borderRadius: 20,
+    elevation: 4,
+    marginBottom: 16,
+  },
+  imageTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#212121',
+    marginBottom: 12,
+  },
+  passportImageView: {
+    width: '100%',
+    height: 250,
+    borderRadius: 12,
+    resizeMode: 'contain',
   },
   card: {
     borderRadius: 20,
@@ -332,8 +492,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    minHeight: '80%',
+    maxHeight: '90%',
+  },
+  modalScrollContent: {
     padding: 24,
-    minHeight: 450,
+    paddingBottom: 40,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -352,5 +516,40 @@ const styles = StyleSheet.create({
   saveButton: {
     marginTop: 8,
     borderRadius: 12,
+  },
+  imageCard: {
+    marginBottom: 20,
+    borderRadius: 16,
+    elevation: 2,
+  },
+  imageContent: {
+    alignItems: 'center',
+  },
+  passportImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 12,
+    resizeMode: 'contain',
+  },
+  noImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+    borderStyle: 'dashed',
+  },
+  noImageText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#BDBDBD',
+  },
+  uploadButton: {
+    borderRadius: 8,
   },
 });
