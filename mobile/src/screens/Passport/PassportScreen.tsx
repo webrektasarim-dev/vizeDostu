@@ -34,7 +34,10 @@ export default function PassportScreen() {
     try {
       setLoading(true);
       const data = await PassportService.getPassport();
+      console.log('📋 Loaded passport data:', data);
       if (data) {
+        console.log('🖼️ Passport has document:', !!data.document);
+        console.log('🔗 Document fileUrl:', data.document?.fileUrl);
         setPassport(data);
       }
     } catch (error) {

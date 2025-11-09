@@ -12,6 +12,8 @@ export default function AdminUsersScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userDetailLoading, setUserDetailLoading] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -56,11 +58,48 @@ export default function AdminUsersScreen({ navigation }: any) {
     );
   };
 
-  const handleViewUser = (user: AdminUser) => {
-    Alert.alert(
-      user.fullName,
-      `Email: ${user.email}\nRol: ${user.role}\nBaşvuru: ${user._count.applications}\nBelge: ${user._count.documents}\nDurum: ${user.isActive ? 'Aktif' : 'Pasif'}`
-    );
+  const handleViewUser = async (user: AdminUser) => {
+    try {
+      setUserDetailLoading(true);
+      console.log('👤 Loading user details:', user.id);
+      
+      const userDetail = await AdminService.getUserById(user.id);
+      console.log('✅ User detail loaded:', userDetail);
+      console.log('🛂 Passports:', userDetail.passports);
+      
+      setSelectedUser(userDetail);
+      
+      // Pasaport bilgilerini formatla
+      let passportInfo = '\n\n📄 PASAPORT BİLGİLERİ:\n';
+      if (userDetail.passports && userDetail.passports.length > 0) {
+        const passport = userDetail.passports[0];
+        passportInfo += `   Pasaport No: ${passport.passportNumber}\n`;
+        passportInfo += `   Geçerlilik: ${new Date(passport.expiryDate).toLocaleDateString('tr-TR')}\n`;
+        passportInfo += `   Ülke: ${passport.issuingCountry}\n`;
+        passportInfo += `   Görsel: ${passport.document ? '✅ Var' : '❌ Yok'}`;
+      } else {
+        passportInfo += '   ❌ Pasaport bilgisi yok';
+      }
+      
+      Alert.alert(
+        `👤 ${user.fullName}`,
+        `📧 Email: ${user.email}\n` +
+        `📱 Telefon: ${userDetail.phoneNumber || 'Belirtilmemiş'}\n` +
+        `👑 Rol: ${user.role}\n` +
+        `📊 Durum: ${user.isActive ? '✅ Aktif' : '❌ Pasif'}\n` +
+        `\n📈 İSTATİSTİKLER:\n` +
+        `   Başvuru: ${user._count.applications}\n` +
+        `   Belge: ${user._count.documents}\n` +
+        `   Randevu: ${userDetail._count.appointments}` +
+        passportInfo,
+        [{ text: 'Kapat' }]
+      );
+    } catch (error) {
+      console.error('Load user detail error:', error);
+      Alert.alert('Hata', 'Kullanıcı detayları yüklenemedi');
+    } finally {
+      setUserDetailLoading(false);
+    }
   };
 
   if (loading) {

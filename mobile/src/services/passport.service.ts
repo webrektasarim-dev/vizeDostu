@@ -5,10 +5,16 @@ export class PassportService {
   static async getPassport() {
     try {
       const response = await apiClient.get('/passports');
+      console.log('🛂 Passport response:', response.data);
+      
       // İlk pasaportu döndür (kullanıcının tek pasaportu olduğunu varsayıyoruz)
       const passports = response.data;
       if (passports && passports.length > 0) {
-        return passports[0];
+        const passport = passports[0];
+        console.log('✅ Passport found:', passport);
+        console.log('📄 Document:', passport.document);
+        console.log('🖼️ Image URL:', passport.document?.fileUrl);
+        return passport;
       }
       return null;
     } catch (error: any) {

@@ -139,6 +139,21 @@ export class AdminService {
           },
           orderBy: { uploadedAt: 'desc' },
         },
+        passports: {
+          select: {
+            id: true,
+            passportNumber: true,
+            expiryDate: true,
+            issuingCountry: true,
+            document: {
+              select: {
+                fileUrl: true,
+                fileName: true,
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
         _count: {
           select: {
             applications: true,

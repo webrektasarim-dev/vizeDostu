@@ -7,32 +7,80 @@ import { getCountryConfig } from '../../config/countries.config';
 import { ApplicationService } from '../../services/application.service';
 import { DocumentService } from '../../services/document.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ApplicationDetailScreen({ route, navigation }: any) {
   const { applicationId, country = 'Fransa' } = route?.params || {};
   const [refreshing, setRefreshing] = useState(false);
   const [uploadedDocuments, setUploadedDocuments] = useState<any[]>([]);
+  const [application, setApplication] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDocuments();
+    loadData();
   }, []);
 
-  const loadDocuments = async () => {
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [country])
+  );
+
+  const loadData = async () => {
     try {
+      setLoading(true);
+      
+      // Başvuruyu çek
+      const apps = await ApplicationService.getActiveApplications();
+      const currentApp = apps.find((a: any) => a.country === country);
+      if (currentApp) {
+        setApplication(currentApp);
+        console.log('📋 Application loaded:', currentApp.status);
+      }
+      
+      // Belgeleri çek
       const docs = await DocumentService.getDocuments();
       setUploadedDocuments(docs);
     } catch (error) {
-      console.error('Load documents error:', error);
+      console.error('Load data error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadDocuments();
+    await loadData();
     setRefreshing(false);
   };
 
-  const steps: Step[] = [
+  // Status'e göre dinamik steps oluştur
+  const getSteps = (currentStatus: string): Step[] => {
+    const statusOrder = ['PREPARING_DOCUMENTS', 'APPOINTMENT_TAKEN', 'AT_CONSULATE', 'COMPLETED'];
+    const currentIndex = statusOrder.indexOf(currentStatus);
+    
+    return [
+      { 
+        label: 'Evrak Hazırlanıyor', 
+        status: currentIndex === 0 ? 'current' : (currentIndex > 0 ? 'completed' : 'pending')
+      },
+      { 
+        label: 'Randevu Alındı', 
+        status: currentIndex === 1 ? 'current' : (currentIndex > 1 ? 'completed' : 'pending')
+      },
+      { 
+        label: 'Konsoloslukta', 
+        status: currentIndex === 2 ? 'current' : (currentIndex > 2 ? 'completed' : 'pending')
+      },
+      { 
+        label: 'Tamamlandı', 
+        status: currentIndex >= 3 ? 'completed' : 'pending'
+      },
+    ];
+  };
+
+  const steps = application ? getSteps(application.status) : [
     { label: 'Evrak Hazırlanıyor', status: 'current' },
     { label: 'Randevu Alındı', status: 'pending' },
     { label: 'Konsoloslukta', status: 'pending' },
