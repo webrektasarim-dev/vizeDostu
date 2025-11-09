@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AdminService } from '../../services/admin.service';
 import { EmptyState } from '../../components/EmptyState';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function AdminApplicationsScreen({ navigation }: any) {
   const [applications, setApplications] = useState<any[]>([]);
@@ -15,6 +16,13 @@ export default function AdminApplicationsScreen({ navigation }: any) {
   useEffect(() => {
     loadApplications();
   }, [filter]);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadApplications();
+    }, [filter])
+  );
 
   const loadApplications = async () => {
     try {

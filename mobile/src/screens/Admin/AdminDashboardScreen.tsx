@@ -4,6 +4,7 @@ import { Text, Card, ActivityIndicator, Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AdminService } from '../../services/admin.service';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function AdminDashboardScreen({ navigation }: any) {
   const [stats, setStats] = useState<any>(null);
@@ -13,6 +14,13 @@ export default function AdminDashboardScreen({ navigation }: any) {
   useEffect(() => {
     loadStats();
   }, []);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadStats();
+    }, [])
+  );
 
   const loadStats = async () => {
     try {

@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AdminService } from '../../services/admin.service';
 import { EmptyState } from '../../components/EmptyState';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function AdminDocumentsScreen() {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -14,6 +15,13 @@ export default function AdminDocumentsScreen() {
   useEffect(() => {
     loadDocuments();
   }, []);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadDocuments();
+    }, [])
+  );
 
   const loadDocuments = async () => {
     try {
@@ -28,6 +36,24 @@ export default function AdminDocumentsScreen() {
       setLoading(false);
     }
   };
+
+  // Belgeleri kullanıcıya göre gruplandır
+  const groupDocumentsByUser = () => {
+    const grouped: Record<string, any> = {};
+    documents.forEach((doc) => {
+      const userId = doc.user.id;
+      if (!grouped[userId]) {
+        grouped[userId] = {
+          user: doc.user,
+          documents: [],
+        };
+      }
+      grouped[userId].documents.push(doc);
+    });
+    return Object.values(grouped);
+  };
+
+  const userGroups = groupDocumentsByUser();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -109,57 +135,75 @@ export default function AdminDocumentsScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           showsVerticalScrollIndicator={false}
         >
-          {documents.map((doc) => (
-            <Card key={doc.id} style={styles.card}>
-              <Card.Content>
-                <View style={styles.cardHeader}>
-                  <Icon name="file-document" size={40} color="#FF9800" />
-                  <View style={styles.docInfo}>
-                    <Text style={styles.fileName}>{doc.fileName}</Text>
-                    <Text style={styles.userText}>👤 {doc.user.fullName}</Text>
-                    <Text style={styles.emailText}>{doc.user.email}</Text>
+          {userGroups.map((group: any) => (
+            <View key={group.user.id} style={styles.userFolder}>
+              {/* Kullanıcı Klasör Başlığı */}
+              <Card style={styles.folderCard}>
+                <Card.Content style={styles.folderHeader}>
+                  <View style={styles.folderIcon}>
+                    <Icon name="folder-account" size={32} color="#FF9800" />
                   </View>
-                </View>
-
-                <View style={styles.divider} />
-
-                <View style={styles.details}>
-                  <View style={styles.detailRow}>
-                    <Icon name="file-chart" size={16} color="#757575" />
-                    <Text style={styles.detailText}>
-                      {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
+                  <View style={styles.folderInfo}>
+                    <Text style={styles.folderName}>📁 {group.user.fullName}</Text>
+                    <Text style={styles.folderEmail}>{group.user.email}</Text>
+                    <Text style={styles.folderCount}>
+                      {group.documents.length} belge
                     </Text>
                   </View>
-                  <View style={styles.detailRow}>
-                    <Icon name="calendar" size={16} color="#757575" />
-                    <Text style={styles.detailText}>
-                      {new Date(doc.uploadedAt).toLocaleDateString('tr-TR')}
-                    </Text>
-                  </View>
-                </View>
+                </Card.Content>
+              </Card>
 
-                <View style={styles.actions}>
-                  <Button
-                    mode="contained"
-                    onPress={() => handleViewDocument(doc)}
-                    style={styles.viewButton}
-                    buttonColor="#2196F3"
-                    icon="eye"
-                  >
-                    Aç
-                  </Button>
-                  <Button
-                    mode="outlined"
-                    onPress={() => handleDelete(doc)}
-                    style={styles.deleteButton}
-                    textColor="#F44336"
-                    icon="delete"
-                  >
-                    Sil
-                  </Button>
-                </View>
-              </Card.Content>
-            </Card>
+              {/* Kullanıcının Belgeleri */}
+              {group.documents.map((doc: any) => (
+                <Card key={doc.id} style={styles.docCard}>
+                  <Card.Content>
+                    <View style={styles.docHeader}>
+                      <Icon name="file-document" size={32} color="#2196F3" />
+                      <View style={styles.docInfo}>
+                        <Text style={styles.fileName}>{doc.fileName}</Text>
+                        <View style={styles.docDetails}>
+                          <View style={styles.detailRow}>
+                            <Icon name="file-chart" size={14} color="#757575" />
+                            <Text style={styles.detailText}>
+                              {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
+                            </Text>
+                          </View>
+                          <View style={styles.detailRow}>
+                            <Icon name="calendar" size={14} color="#757575" />
+                            <Text style={styles.detailText}>
+                              {new Date(doc.uploadedAt).toLocaleDateString('tr-TR')}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.actions}>
+                      <Button
+                        mode="contained"
+                        onPress={() => handleViewDocument(doc)}
+                        style={styles.viewButton}
+                        buttonColor="#2196F3"
+                        icon="eye"
+                        compact
+                      >
+                        Aç
+                      </Button>
+                      <Button
+                        mode="outlined"
+                        onPress={() => handleDelete(doc)}
+                        style={styles.deleteButton}
+                        textColor="#F44336"
+                        icon="delete"
+                        compact
+                      >
+                        Sil
+                      </Button>
+                    </View>
+                  </Card.Content>
+                </Card>
+              ))}
+            </View>
           ))}
         </ScrollView>
       )}
@@ -205,19 +249,69 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 100,
   },
-  card: {
-    marginBottom: 16,
-    borderRadius: 16,
-    elevation: 3,
+  userFolder: {
+    marginBottom: 24,
   },
-  cardHeader: {
+  folderCard: {
+    marginBottom: 12,
+    borderRadius: 16,
+    elevation: 4,
+    backgroundColor: '#FFF3E0',
+  },
+  folderHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
+    paddingVertical: 8,
+  },
+  folderIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+  },
+  folderInfo: {
+    flex: 1,
+  },
+  folderName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#E65100',
+    marginBottom: 2,
+  },
+  folderEmail: {
+    fontSize: 13,
+    color: '#757575',
+    marginBottom: 4,
+  },
+  folderCount: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FF9800',
+  },
+  docCard: {
+    marginBottom: 12,
+    marginLeft: 16,
+    borderRadius: 12,
+    elevation: 2,
+    borderLeftWidth: 3,
+    borderLeftColor: '#2196F3',
+  },
+  docHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: 12,
     marginBottom: 12,
   },
   docInfo: {
     flex: 1,
+  },
+  docDetails: {
+    marginTop: 8,
+    gap: 8,
   },
   fileName: {
     fontSize: 16,
@@ -225,33 +319,13 @@ const styles = StyleSheet.create({
     color: '#212121',
     marginBottom: 4,
   },
-  userText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2196F3',
-    marginBottom: 2,
-  },
-  emailText: {
-    fontSize: 12,
-    color: '#757575',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    marginVertical: 12,
-  },
-  details: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 12,
-  },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
   detailText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#757575',
   },
   actions: {
