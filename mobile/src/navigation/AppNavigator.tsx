@@ -113,22 +113,31 @@ function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#2196F3',
-        tabBarInactiveTintColor: '#757575',
+        tabBarActiveTintColor: '#1E88E5',
+        tabBarInactiveTintColor: '#9E9E9E',
         tabBarStyle: {
-          height: 65,
-          paddingBottom: 5,
-          paddingTop: 5,
-          borderTopWidth: 1,
-          borderTopColor: '#E0E0E0',
+          position: 'absolute',
+          bottom: 20,
+          left: 20,
+          right: 20,
+          height: 70,
+          borderRadius: 20,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 0,
+          paddingBottom: 10,
+          paddingTop: 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.15,
+          shadowRadius: 16,
+          elevation: 12,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
-          marginTop: -2,
+          fontWeight: '700',
         },
         tabBarIconStyle: {
-          marginTop: 3,
+          marginTop: 2,
         },
       }}
     >
@@ -137,7 +146,9 @@ function MainTabs() {
         component={DashboardScreen}
         options={{
           title: 'Ana Sayfa',
-          tabBarIcon: ({ color, size }) => <Icon name="home" size={size} color={color} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "home" : "home-outline"} size={26} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -146,7 +157,9 @@ function MainTabs() {
         component={ApplicationListScreen}
         options={{
           title: 'Başvurular',
-          tabBarIcon: ({ color, size }) => <Icon name="clipboard-text" size={size} color={color} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "clipboard-text" : "clipboard-text-outline"} size={26} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -155,7 +168,9 @@ function MainTabs() {
         component={DocumentListScreen}
         options={{
           title: 'Belgeler',
-          tabBarIcon: ({ color, size }) => <Icon name="folder" size={size} color={color} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "folder" : "folder-outline"} size={26} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -163,17 +178,10 @@ function MainTabs() {
         name="AIAssistant"
         component={ChatScreen}
         options={{
-          title: 'AI Chat',
-          tabBarIcon: ({ color, size }) => <Icon name="robot" size={size} color={color} />,
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Passport"
-        component={PassportScreen}
-        options={{
-          title: 'Pasaport',
-          tabBarIcon: ({ color, size }) => <Icon name="passport" size={size} color={color} />,
+          title: 'AI Asistan',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "robot" : "robot-outline"} size={26} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -182,7 +190,9 @@ function MainTabs() {
         component={ProfileScreen}
         options={{
           title: 'Profil',
-          tabBarIcon: ({ color, size }) => <Icon name="account" size={size} color={color} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "account-circle" : "account-circle-outline"} size={26} color={color} />
+          ),
           headerShown: false,
         }}
       />
