@@ -28,7 +28,13 @@ const Tab = createBottomTabNavigator();
 
 function MainTabs() {
   const { user } = useSelector((state: RootState) => state.auth);
-  const isAdmin = user?.role === 'ADMIN';
+  
+  // User yoksa veya geçersizse güvenli fallback
+  if (!user || !user.id) {
+    return null;
+  }
+  
+  const isAdmin = user.role === 'ADMIN';
 
   // Admin için sadece admin paneli ve profil
   if (isAdmin) {
@@ -200,15 +206,25 @@ export default function AppNavigator() {
       if (isLoggedIn) {
         // Profile'ı arkaplanda yükle, UI'ı bloklamaz
         AuthService.getProfile()
-          .then(user => dispatch(setUser(user)))
-          .catch(() => {
+          .then(user => {
+            if (user && user.id) {
+              dispatch(setUser(user));
+            } else {
+              dispatch(clearUser());
+            }
+          })
+          .catch((err) => {
             // Hata olursa sessizce çık
-        dispatch(clearUser());
+            console.log('Profile fetch failed:', err.message);
+            dispatch(clearUser());
           });
+      } else {
+        dispatch(clearUser());
       }
     } catch (error) {
       // Hata olsa bile UI açılır
       console.log('Auth check failed silently');
+      dispatch(clearUser());
     }
   };
 

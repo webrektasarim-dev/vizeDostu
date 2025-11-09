@@ -21,8 +21,9 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
 
+    setLoading(true);
+    
     try {
-      setLoading(true);
       const { user, accessToken } = await AuthService.login(email, password);
       
       console.log('🔐 LOGIN SUCCESS:', user);
@@ -30,6 +31,7 @@ export default function LoginScreen({ navigation }: any) {
       
       dispatch(setUser(user));
       dispatch(setToken(accessToken));
+      setLoading(false);
       
       if (user?.role === 'ADMIN') {
         Alert.alert('✅ Admin Girişi', `Hoş geldiniz ${user.fullName}!\n\nAdmin paneline erişim sağlandı! 👑`);
@@ -43,20 +45,21 @@ export default function LoginScreen({ navigation }: any) {
       if (error.response) {
         // Backend'den gelen hata
         if (error.response.status === 401) {
-          errorMessage = 'Hatalı e-posta veya şifre!';
+          errorMessage = '❌ Hatalı e-posta veya şifre!';
+        } else if (error.response.status === 500) {
+          errorMessage = '⚠️ Sunucu hatası. Lütfen tekrar deneyin.';
         } else if (error.response.data?.message) {
           errorMessage = error.response.data.message;
         }
-      } else if (error.code === 'ECONNABORTED') {
-        errorMessage = 'Bağlantı zaman aşımına uğradı. Backend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
+      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        errorMessage = '⏱️ Bağlantı zaman aşımına uğradı.\n\nBackend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
       } else if (error.message) {
         errorMessage = error.message;
       }
       
-      Alert.alert('❌ Giriş Hatası', errorMessage);
-      return; // Erken çık, finally bloğuna gitme
-    } finally {
-      setLoading(false);
+      Alert.alert('Giriş Yapılamadı', errorMessage, [
+        { text: 'Tamam', style: 'default' }
+      ]);
     }
   };
 

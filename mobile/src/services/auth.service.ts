@@ -12,17 +12,28 @@ export class AuthService {
   }
 
   static async login(email: string, password: string) {
-    const response = await apiClient.post('/auth/login', {
-      email,
-      password,
-    });
+    try {
+      const response = await apiClient.post('/auth/login', {
+        email,
+        password,
+      });
 
-    const { user, accessToken, refreshToken } = response.data;
+      const { user, accessToken, refreshToken } = response.data;
 
-    await SecureStore.setItemAsync('accessToken', accessToken);
-    await SecureStore.setItemAsync('refreshToken', refreshToken);
+      if (!user || !accessToken) {
+        throw new Error('Invalid response from server');
+      }
 
-    return { user, accessToken };
+      await SecureStore.setItemAsync('accessToken', accessToken);
+      await SecureStore.setItemAsync('refreshToken', refreshToken);
+
+      return { user, accessToken };
+    } catch (error) {
+      // Error'u yukarı fırlat ama önce token'ları temizle
+      await SecureStore.deleteItemAsync('accessToken');
+      await SecureStore.deleteItemAsync('refreshToken');
+      throw error;
+    }
   }
 
   static async logout() {
