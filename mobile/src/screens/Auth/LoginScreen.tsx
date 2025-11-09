@@ -38,28 +38,41 @@ export default function LoginScreen({ navigation }: any) {
       }
     } catch (error: any) {
       console.error('❌ Login error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       setLoading(false);
       
       let errorMessage = 'Giriş yapılamadı. Lütfen tekrar deneyin.';
       
-      if (error.response) {
-        // Backend'den gelen hata
-        if (error.response.status === 401) {
-          errorMessage = '❌ Hatalı e-posta veya şifre!';
-        } else if (error.response.status === 500) {
-          errorMessage = '⚠️ Sunucu hatası. Lütfen tekrar deneyin.';
-        } else if (error.response.data?.message) {
-          errorMessage = error.response.data.message;
+      try {
+        if (error?.response?.status) {
+          // Backend'den gelen hata
+          const status = error.response.status;
+          
+          if (status === 400) {
+            errorMessage = '❌ Geçersiz bilgiler. Lütfen kontrol edip tekrar deneyin.';
+          } else if (status === 401) {
+            errorMessage = '❌ Hatalı e-posta veya şifre!';
+          } else if (status === 500) {
+            errorMessage = '⚠️ Sunucu hatası. Lütfen tekrar deneyin.';
+          } else if (error.response.data?.message) {
+            errorMessage = error.response.data.message;
+          }
+        } else if (error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
+          errorMessage = '⏱️ Bağlantı zaman aşımına uğradı.\n\nBackend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
+        } else if (error?.message) {
+          errorMessage = error.message;
         }
-      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        errorMessage = '⏱️ Bağlantı zaman aşımına uğradı.\n\nBackend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
-      } else if (error.message) {
-        errorMessage = error.message;
+      } catch (parseError) {
+        console.error('Error parsing error:', parseError);
+        errorMessage = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
       }
       
-      Alert.alert('Giriş Yapılamadı', errorMessage, [
-        { text: 'Tamam', style: 'default' }
-      ]);
+      // Alert'i timeout içinde göster, crash'i önle
+      setTimeout(() => {
+        Alert.alert('Giriş Yapılamadı', errorMessage, [
+          { text: 'Tamam', style: 'default' }
+        ]);
+      }, 100);
     }
   };
 
