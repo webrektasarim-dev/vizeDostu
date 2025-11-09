@@ -7,7 +7,7 @@ export const API_BASE_URL = Constants.expoConfig?.extra?.API_URL || 'https://viz
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000, // 30 saniye (Render cold start için)
+  timeout: 60000, // 60 saniye (Render cold start için yeterli)
   headers: {
     'Content-Type': 'application/json',
   },

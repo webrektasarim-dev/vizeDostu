@@ -13,6 +13,7 @@ export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('Giriş yapılıyor...');
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
@@ -22,9 +23,24 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     setLoading(true);
+    setLoadingMessage('Giriş yapılıyor...');
+    
+    // 10 saniye sonra mesaj değiştir (cold start uyarısı)
+    const messageTimer = setTimeout(() => {
+      setLoadingMessage('Backend hazırlanıyor... (ilk giriş yavaş olabilir)');
+    }, 10000);
+
+    // 30 saniye sonra son uyarı
+    const finalWarningTimer = setTimeout(() => {
+      setLoadingMessage('Backend uyanıyor... Lütfen bekleyin...');
+    }, 30000);
     
     try {
       const { user, accessToken } = await AuthService.login(email, password);
+      
+      // Timer'ları temizle
+      clearTimeout(messageTimer);
+      clearTimeout(finalWarningTimer);
       
       console.log('🔐 LOGIN SUCCESS:', user);
       console.log('👑 USER ROLE:', user?.role);
@@ -37,6 +53,10 @@ export default function LoginScreen({ navigation }: any) {
         Alert.alert('✅ Admin Girişi', `Hoş geldiniz ${user.fullName}!\n\nAdmin paneline erişim sağlandı! 👑`);
       }
     } catch (error: any) {
+      // Timer'ları temizle
+      clearTimeout(messageTimer);
+      clearTimeout(finalWarningTimer);
+      
       console.error('❌ Login error:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
       setLoading(false);
@@ -58,7 +78,7 @@ export default function LoginScreen({ navigation }: any) {
             errorMessage = error.response.data.message;
           }
         } else if (error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
-          errorMessage = '⏱️ Bağlantı zaman aşımına uğradı.\n\nBackend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
+          errorMessage = '⏱️ Bağlantı zaman aşımına uğradı.\n\n🔄 Render backend ilk açılışta yavaştır (15-30 saniye).\n\nLütfen tekrar "Giriş Yap" butonuna basın!';
         } else if (error?.message) {
           errorMessage = error.message;
         }
@@ -133,8 +153,14 @@ export default function LoginScreen({ navigation }: any) {
           contentStyle={styles.buttonContent}
           labelStyle={styles.buttonLabel}
         >
-          Giriş Yap
+          {loading ? loadingMessage : 'Giriş Yap'}
         </Button>
+        
+        {loading && (
+          <Text style={styles.loadingHint}>
+            💡 İlk giriş 30-60 saniye sürebilir
+          </Text>
+        )}
 
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
@@ -257,5 +283,12 @@ const styles = StyleSheet.create({
     color: '#2196F3',
     fontSize: 16,
     fontWeight: '600',
+  },
+  loadingHint: {
+    fontSize: 12,
+    color: '#FF9800',
+    textAlign: 'center',
+    marginTop: 12,
+    fontStyle: 'italic',
   },
 });
