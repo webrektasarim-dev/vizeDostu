@@ -31,12 +31,19 @@ Türkiye'den yurt dışına vize başvurusu yapacak kişilere **yapay zeka deste
 
 ## 🚀 Hızlı Başlangıç
 
-### 1️⃣ Docker Başlat
+### ☁️ Production (Render.com)
+
+**Backend:** https://vizedostu-backend.onrender.com
+**Swagger API Docs:** https://vizedostu-backend.onrender.com/api/docs
+
+### 💻 Local Development
+
+#### 1️⃣ Docker Başlat
 ```powershell
 docker-compose up -d postgres redis
 ```
 
-### 2️⃣ Backend Başlat
+#### 2️⃣ Backend Başlat
 ```powershell
 cd backend
 npm install
@@ -49,20 +56,24 @@ npm run start:dev
 ✅ Backend: http://localhost:3000
 ✅ Swagger: http://localhost:3000/api/docs
 
-### 3️⃣ Mobile Başlat
+#### 3️⃣ Mobile Başlat
 ```powershell
 cd mobile
 npm install
-npm start
+npx expo start
 ```
 
-📱 iPhone'da Expo Go ile QR kodu tara!
+iPhone'da Expo Go ile QR tarayın.
 
-## 🧪 Test Hesabı
+## 🧪 Test Hesapları
 ```
-Email: test@vizedostu.com
-Şifre: Test123!
+👑 Admin: admin@admin.com / Test123!
+👤 User:  test@vizedostu.com / Test123!
 ```
+
+**Not:** İlk kullanımda Swagger'dan kayıt olmanız gerekebilir:
+- https://vizedostu-backend.onrender.com/api/docs
+- POST /api/v1/auth/register
 
 ## 📱 Ekranlar
 
@@ -97,10 +108,14 @@ OPENAI_API_KEY=sk-proj-...
 
 ### Mobile .env
 ```env
-API_URL=http://192.168.111.5:3000/api/v1
+# Production (Render)
+API_URL=https://vizedostu-backend.onrender.com/api/v1
+
+# Local Development
+# API_URL=http://192.168.111.5:3000/api/v1
 ```
 
-**Not:** iPhone için PC'nin local IP adresini kullan!
+**Not:** Production için Render URL kullanılıyor. Local development için PC IP'sini kullanın.
 
 ## 🐳 Docker Komutları
 
