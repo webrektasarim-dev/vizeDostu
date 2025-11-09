@@ -6,8 +6,9 @@ import { useDispatch } from 'react-redux';
 import { setUser, setToken } from '../../store/slices/authSlice';
 import { AuthService } from '../../services/auth.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
-const { height } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -86,7 +87,7 @@ export default function LoginScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LinearGradient
-        colors={['#667eea', '#764ba2', '#f093fb']}
+        colors={[colors.primary.main, colors.primary.dark, '#0D47A1']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -202,10 +203,10 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     marginTop: -30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 24,
-    elevation: 8,
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+    padding: spacing.lg,
+    ...shadows.lg,
   },
   welcomeText: {
     fontSize: 28,

@@ -4,6 +4,7 @@ import { TextInput, Button, Text, Surface } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthService } from '../../services/auth.service';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
 export default function RegisterScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -77,7 +78,7 @@ export default function RegisterScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LinearGradient
-        colors={['#667eea', '#764ba2', '#f093fb']}
+        colors={[colors.primary.light, colors.primary.main, colors.primary.dark]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -176,21 +177,22 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   surface: {
-    margin: 20,
-    padding: 24,
-    borderRadius: 20,
-    elevation: 8,
+    margin: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
+    backgroundColor: colors.neutral.white,
+    ...shadows.lg,
   },
   input: {
-    marginBottom: 16,
-    backgroundColor: '#FFFFFF',
+    marginBottom: spacing.md,
+    backgroundColor: colors.neutral.white,
   },
   button: {
-    marginTop: 8,
-    borderRadius: 12,
+    marginTop: spacing.sm,
+    borderRadius: borderRadius.md,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   loginButton: {
     marginTop: 16,

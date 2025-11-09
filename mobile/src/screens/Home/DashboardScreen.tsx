@@ -10,6 +10,7 @@ import { ApplicationService } from '../../services/application.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ProgressCard, QuickActionButton } from '../../components';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -272,12 +273,12 @@ export default function DashboardScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.background.default,
   },
   headerGradient: {
     paddingTop: 50,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
+    paddingBottom: 28,
+    paddingHorizontal: spacing.lg,
   },
   headerTop: {
     flexDirection: 'row',
@@ -374,23 +375,24 @@ const styles = StyleSheet.create({
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: spacing.md,
   },
   quickAction: {
     width: (width - 44) / 2,
-    borderRadius: 16,
-    elevation: 3,
-    backgroundColor: '#FFFFFF',
-    padding: 16,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.neutral.white,
+    padding: spacing.lg,
     alignItems: 'center',
+    ...shadows.md,
   },
   quickActionGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md,
+    ...shadows.sm,
   },
   quickActionTitle: {
     fontSize: 14,
