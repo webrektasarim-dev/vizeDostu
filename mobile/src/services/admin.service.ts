@@ -96,6 +96,11 @@ export const AdminService = {
     return response.data;
   },
 
+  async deleteApplication(id: string) {
+    const response = await apiClient.delete(`/admin/applications/${id}`);
+    return response.data;
+  },
+
   // === DOCUMENT MANAGEMENT ===
   async getAllDocuments(page: number = 1, limit: number = 20) {
     const params = { page, limit };

@@ -12,6 +12,7 @@ interface DocumentRequirementCardProps {
   fileSize?: number;
   onUpload: () => void;
   onView?: () => void;
+  disabled?: boolean;
 }
 
 export function DocumentRequirementCard({
@@ -23,6 +24,7 @@ export function DocumentRequirementCard({
   fileSize,
   onUpload,
   onView,
+  disabled = false,
 }: DocumentRequirementCardProps) {
   return (
     <Card style={[styles.card, uploaded && styles.uploadedCard]}>
@@ -72,8 +74,9 @@ export function DocumentRequirementCard({
             style={styles.uploadButton}
             icon="upload"
             buttonColor="#2196F3"
+            disabled={disabled}
           >
-            Belge Yükle
+            {disabled ? 'Yükleniyor...' : 'Belge Yükle'}
           </Button>
         )}
       </Card.Content>

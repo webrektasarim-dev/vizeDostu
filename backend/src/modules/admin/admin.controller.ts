@@ -96,6 +96,12 @@ export class AdminController {
     return this.adminService.updateApplicationStatus(id, status);
   }
 
+  @Delete('applications/:id')
+  @ApiOperation({ summary: 'Delete application (admin)' })
+  async deleteApplication(@Param('id') id: string) {
+    return this.adminService.deleteApplication(id);
+  }
+
   // === DOCUMENT MANAGEMENT ===
   @Get('documents')
   @ApiOperation({ summary: 'Get all documents' })

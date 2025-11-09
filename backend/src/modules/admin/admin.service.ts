@@ -267,6 +267,14 @@ export class AdminService {
     return { message: 'Application status updated', application };
   }
 
+  async deleteApplication(id: string) {
+    await this.prisma.application.delete({
+      where: { id },
+    });
+
+    return { message: 'Application deleted successfully' };
+  }
+
   // === DOCUMENT MANAGEMENT ===
   async getAllDocuments(page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;

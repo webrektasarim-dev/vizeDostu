@@ -35,6 +35,17 @@ export default function AdminDocumentsScreen() {
     setRefreshing(false);
   };
 
+  const handleViewDocument = async (doc: any) => {
+    try {
+      const { Linking } = await import('react-native');
+      await Linking.openURL(doc.fileUrl);
+    } catch (error) {
+      Alert.alert('Belge Detayı', `Belge: ${doc.fileName}\nURL: ${doc.fileUrl}`, [
+        { text: 'Kapat' }
+      ]);
+    }
+  };
+
   const handleDelete = (doc: any) => {
     Alert.alert(
       'Belgeyi Sil',
@@ -124,15 +135,12 @@ export default function AdminDocumentsScreen() {
                 <View style={styles.actions}>
                   <Button
                     mode="contained"
-                    onPress={() => Alert.alert('Belge URL', doc.fileUrl, [
-                      { text: 'Kapat', style: 'cancel' },
-                      { text: 'Kopyala', onPress: () => console.log('Copy:', doc.fileUrl) }
-                    ])}
+                    onPress={() => handleViewDocument(doc)}
                     style={styles.viewButton}
                     buttonColor="#2196F3"
                     icon="eye"
                   >
-                    Görüntüle
+                    Aç
                   </Button>
                   <Button
                     mode="outlined"

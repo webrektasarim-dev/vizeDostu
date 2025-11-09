@@ -1,5 +1,7 @@
 import { apiClient } from '../config/api.config';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 export class DocumentService {
   static async getDocuments() {
@@ -59,6 +61,45 @@ export class DocumentService {
     }
     
     return null;
+  }
+
+  static async downloadDocument(fileUrl: string, fileName: string) {
+    try {
+      const fileUri = FileSystem.documentDirectory + fileName;
+      const downloadResult = await FileSystem.downloadAsync(fileUrl, fileUri);
+      return downloadResult.uri;
+    } catch (error) {
+      console.error('Download error:', error);
+      throw error;
+    }
+  }
+
+  static async shareDocument(fileUrl: string, fileName: string) {
+    try {
+      const localUri = await this.downloadDocument(fileUrl, fileName);
+      
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(localUri);
+      } else {
+        throw new Error('Paylaşım bu cihazda desteklenmiyor');
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      throw error;
+    }
+  }
+
+  static async viewDocument(fileUrl: string) {
+    try {
+      // Web URL ise tarayıcıda aç (mock storage için)
+      if (fileUrl.includes('http')) {
+        const { Linking } = require('react-native');
+        await Linking.openURL(fileUrl);
+      }
+    } catch (error) {
+      console.error('View error:', error);
+      throw error;
+    }
   }
 }
 

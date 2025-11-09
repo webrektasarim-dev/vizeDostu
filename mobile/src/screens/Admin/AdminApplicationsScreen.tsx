@@ -107,6 +107,30 @@ export default function AdminApplicationsScreen({ navigation }: any) {
     }
   };
 
+  const handleDelete = (app: any) => {
+    Alert.alert(
+      'Başvuruyu Sil',
+      `${app.user.fullName} - ${app.country} başvurusunu silmek istediğinizden emin misiniz?`,
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AdminService.deleteApplication(app.id);
+              Alert.alert('Başarılı', 'Başvuru silindi');
+              loadApplications();
+            } catch (error) {
+              console.error('Delete error:', error);
+              Alert.alert('Hata', 'Başvuru silinemedi');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -216,14 +240,25 @@ export default function AdminApplicationsScreen({ navigation }: any) {
                     </View>
                   </View>
 
-                  <Button
-                    mode="outlined"
-                    onPress={() => handleUpdateStatus(app)}
-                    style={styles.actionButton}
-                    icon="pencil"
-                  >
-                    Durum Güncelle
-                  </Button>
+                  <View style={styles.actions}>
+                    <Button
+                      mode="outlined"
+                      onPress={() => handleUpdateStatus(app)}
+                      style={styles.actionButton}
+                      icon="pencil"
+                    >
+                      Durum Güncelle
+                    </Button>
+                    <Button
+                      mode="outlined"
+                      onPress={() => handleDelete(app)}
+                      style={styles.deleteButton}
+                      textColor="#F44336"
+                      icon="delete"
+                    >
+                      Sil
+                    </Button>
+                  </View>
                 </Card.Content>
               </Card>
             </TouchableOpacity>
@@ -354,8 +389,19 @@ const styles = StyleSheet.create({
     color: '#212121',
     flex: 1,
   },
-  actionButton: {
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
     marginTop: 8,
+  },
+  actionButton: {
+    flex: 1,
+    borderRadius: 8,
+  },
+  deleteButton: {
+    flex: 1,
+    borderRadius: 8,
+    borderColor: '#F44336',
   },
 });
 

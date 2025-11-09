@@ -12,6 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function DocumentListScreen() {
   const [uploading, setUploading] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeApplication, setActiveApplication] = useState<any>(null);
@@ -59,6 +60,7 @@ export default function DocumentListScreen() {
       if (!file) return;
 
       setUploading(true);
+      setUploadingDoc(documentName);
       await DocumentService.uploadDocument(
         file.uri, 
         documentId,
@@ -70,7 +72,49 @@ export default function DocumentListScreen() {
       Alert.alert('❌ Hata', error.message || 'Belge yüklenirken hata oluştu');
     } finally {
       setUploading(false);
+      setUploadingDoc('');
     }
+  };
+
+  const handleDocumentAction = (doc: any) => {
+    Alert.alert(
+      doc.fileName,
+      'Bu belge ile ne yapmak istersiniz?',
+      [
+        { 
+          text: 'Görüntüle', 
+          onPress: async () => {
+            try {
+              await DocumentService.viewDocument(doc.fileUrl);
+            } catch (error) {
+              Alert.alert('Hata', 'Belge görüntülenemedi');
+            }
+          }
+        },
+        { 
+          text: 'İndir', 
+          onPress: async () => {
+            try {
+              await DocumentService.downloadDocument(doc.fileUrl, doc.fileName);
+              Alert.alert('Başarılı', 'Belge indirildi');
+            } catch (error) {
+              Alert.alert('Hata', 'Belge indirilemedi');
+            }
+          }
+        },
+        { 
+          text: 'Paylaş', 
+          onPress: async () => {
+            try {
+              await DocumentService.shareDocument(doc.fileUrl, doc.fileName);
+            } catch (error: any) {
+              Alert.alert('Hata', error.message || 'Belge paylaşılamadı');
+            }
+          }
+        },
+        { text: 'İptal', style: 'cancel' },
+      ]
+    );
   };
 
   const isDocumentUploaded = (docId: string) => {
@@ -184,6 +228,16 @@ export default function DocumentListScreen() {
           <Text style={styles.progressText}>%{Math.round(progress)} Tamamlandı</Text>
         </Surface>
 
+        {/* Loading Göstergesi */}
+        {uploading && uploadingDoc && (
+          <Card style={styles.loadingCard}>
+            <Card.Content style={styles.loadingContent}>
+              <ActivityIndicator size="small" color="#2196F3" />
+              <Text style={styles.loadingText}>📤 {uploadingDoc} yükleniyor...</Text>
+            </Card.Content>
+          </Card>
+        )}
+
         {/* Gerekli Belgeler */}
         <Text style={styles.sectionTitle}>📄 Gerekli Belgeler</Text>
         {countryConfig.documents.map((doc) => {
@@ -198,7 +252,8 @@ export default function DocumentListScreen() {
               fileName={uploaded?.fileName}
               fileSize={uploaded?.fileSize}
               onUpload={() => handleUpload(doc.id, doc.name)}
-              onView={uploaded ? () => Alert.alert(doc.name, uploaded.fileName) : undefined}
+              onView={uploaded ? () => handleDocumentAction(uploaded) : undefined}
+              disabled={uploading}
             />
           );
         })}
@@ -324,6 +379,23 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#212121',
     marginBottom: 16,
+  },
+  loadingCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    backgroundColor: '#E3F2FD',
+    elevation: 2,
+  },
+  loadingContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 8,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2196F3',
   },
   completionCard: {
     padding: 20,
