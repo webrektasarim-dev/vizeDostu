@@ -10,8 +10,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const { height } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }: any) {
-  const [email, setEmail] = useState('test@vizedostu.com');
-  const [password, setPassword] = useState('Test123!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -48,17 +48,17 @@ export default function LoginScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LinearGradient
-        colors={['#2196F3', '#1976D2', '#0D47A1']}
+        colors={['#667eea', '#764ba2', '#f093fb']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.logoContainer}>
           <View style={styles.iconCircle}>
-            <Icon name="airplane" size={48} color="#FFFFFF" />
+            <Icon name="earth" size={52} color="#FFFFFF" />
           </View>
-          <Text style={styles.logoText}>Vize Dostu</Text>
-          <Text style={styles.logoSubtext}>Vizene giden yol burada başlar</Text>
+          <Text style={styles.logoText}>✈️ Vize Dostu</Text>
+          <Text style={styles.logoSubtext}>Dünya vizeniz bizimle güvende</Text>
         </View>
       </LinearGradient>
 

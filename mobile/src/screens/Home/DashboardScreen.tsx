@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { ApplicationService } from '../../services/application.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ProgressCard, QuickActionButton } from '../../components';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +22,13 @@ export default function DashboardScreen({ navigation }: any) {
   useEffect(() => {
     loadApplications();
   }, []);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadApplications();
+    }, [])
+  );
 
   const loadApplications = async () => {
     try {

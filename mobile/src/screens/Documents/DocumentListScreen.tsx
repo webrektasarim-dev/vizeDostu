@@ -8,6 +8,7 @@ import { ApplicationService } from '../../services/application.service';
 import { getCountryConfig } from '../../config/countries.config';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { EmptyState } from '../../components/EmptyState';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function DocumentListScreen() {
   const [uploading, setUploading] = useState(false);
@@ -19,6 +20,13 @@ export default function DocumentListScreen() {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const loadData = async () => {
     try {

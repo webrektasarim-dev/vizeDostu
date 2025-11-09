@@ -6,6 +6,7 @@ import { ProgressCard } from '../../components';
 import { EmptyState } from '../../components/EmptyState';
 import { ApplicationService } from '../../services/application.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ApplicationListScreen({ navigation }: any) {
   const [applications, setApplications] = useState([]);
@@ -15,6 +16,13 @@ export default function ApplicationListScreen({ navigation }: any) {
   useEffect(() => {
     loadApplications();
   }, []);
+
+  // Ekrana her gelindiğinde refresh yap
+  useFocusEffect(
+    React.useCallback(() => {
+      loadApplications();
+    }, [])
+  );
 
   const loadApplications = async () => {
     try {

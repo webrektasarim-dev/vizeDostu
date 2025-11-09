@@ -32,9 +32,23 @@ export default function ApplicationCreateScreen({ navigation }: any) {
       
       console.log('✅ Application created:', result);
       
-      Alert.alert('Başarılı!', 'Başvurunuz oluşturuldu', [
-        { text: 'Tamam', onPress: () => navigation.goBack() },
-      ]);
+      Alert.alert(
+        '✅ Başarılı!', 
+        'Başvurunuz oluşturuldu. Şimdi belgelerinizi yükleyebilirsiniz.',
+        [
+          {
+            text: 'Belgelere Git',
+            onPress: () => {
+              navigation.navigate('Belgeler');
+              setTimeout(() => navigation.goBack(), 100);
+            }
+          },
+          {
+            text: 'Tamam',
+            onPress: () => navigation.goBack()
+          }
+        ]
+      );
     } catch (error: any) {
       console.error('❌ Create application error:', error);
       console.error('Error response:', error.response?.data);
