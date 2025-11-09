@@ -11,6 +11,7 @@ export default function AdminDocumentsScreen() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadDocuments();
@@ -22,6 +23,19 @@ export default function AdminDocumentsScreen() {
       loadDocuments();
     }, [])
   );
+
+  // Klasörü aç/kapat
+  const toggleFolder = (userId: string) => {
+    setExpandedFolders((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(userId)) {
+        newSet.delete(userId);
+      } else {
+        newSet.add(userId);
+      }
+      return newSet;
+    });
+  };
 
   const loadDocuments = async () => {
     try {
@@ -135,26 +149,42 @@ export default function AdminDocumentsScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           showsVerticalScrollIndicator={false}
         >
-          {userGroups.map((group: any) => (
-            <View key={group.user.id} style={styles.userFolder}>
-              {/* Kullanıcı Klasör Başlığı */}
-              <Card style={styles.folderCard}>
-                <Card.Content style={styles.folderHeader}>
-                  <View style={styles.folderIcon}>
-                    <Icon name="folder-account" size={32} color="#FF9800" />
-                  </View>
-                  <View style={styles.folderInfo}>
-                    <Text style={styles.folderName}>📁 {group.user.fullName}</Text>
-                    <Text style={styles.folderEmail}>{group.user.email}</Text>
-                    <Text style={styles.folderCount}>
-                      {group.documents.length} belge
-                    </Text>
-                  </View>
-                </Card.Content>
-              </Card>
+          {userGroups.map((group: any) => {
+            const isExpanded = expandedFolders.has(group.user.id);
+            
+            return (
+              <View key={group.user.id} style={styles.userFolder}>
+                {/* Kullanıcı Klasör Başlığı - Tıklanabilir */}
+                <TouchableOpacity onPress={() => toggleFolder(group.user.id)} activeOpacity={0.7}>
+                  <Card style={styles.folderCard}>
+                    <Card.Content style={styles.folderHeader}>
+                      <View style={styles.folderIcon}>
+                        <Icon 
+                          name={isExpanded ? "folder-open" : "folder"} 
+                          size={32} 
+                          color="#FF9800" 
+                        />
+                      </View>
+                      <View style={styles.folderInfo}>
+                        <Text style={styles.folderName}>
+                          {isExpanded ? '📂' : '📁'} {group.user.fullName}
+                        </Text>
+                        <Text style={styles.folderEmail}>{group.user.email}</Text>
+                        <Text style={styles.folderCount}>
+                          {group.documents.length} belge
+                        </Text>
+                      </View>
+                      <Icon 
+                        name={isExpanded ? "chevron-up" : "chevron-down"} 
+                        size={28} 
+                        color="#FF9800" 
+                      />
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
 
-              {/* Kullanıcının Belgeleri */}
-              {group.documents.map((doc: any) => (
+                {/* Kullanıcının Belgeleri - Sadece açıksa göster */}
+                {isExpanded && group.documents.map((doc: any) => (
                 <Card key={doc.id} style={styles.docCard}>
                   <Card.Content>
                     <View style={styles.docHeader}>
@@ -202,9 +232,10 @@ export default function AdminDocumentsScreen() {
                     </View>
                   </Card.Content>
                 </Card>
-              ))}
-            </View>
-          ))}
+              )))}
+              </View>
+            );
+          })}
         </ScrollView>
       )}
     </View>
@@ -262,7 +293,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   folderIcon: {
     width: 50,
