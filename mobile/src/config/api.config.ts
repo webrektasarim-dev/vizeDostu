@@ -1,14 +1,13 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
-// PC'nin IP adresini kullan (iPhone için)
-export const API_BASE_URL = __DEV__ 
-  ? 'http://192.168.1.104:3000/api/v1' 
-  : 'https://api.vizedostu.com/api/v1';
+// Environment variable'dan API URL'i al
+export const API_BASE_URL = Constants.expoConfig?.extra?.API_URL || 'https://vizedostu-backend.onrender.com/api/v1';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 8000, // 8 saniye
+  timeout: 30000, // 30 saniye (Render cold start için)
   headers: {
     'Content-Type': 'application/json',
   },

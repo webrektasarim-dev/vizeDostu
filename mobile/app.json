@@ -1,12 +1,15 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Vize Dostu",
+    "slug": "vizedostu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "extra": {
+      "API_URL": "https://vizedostu-backend.onrender.com/api/v1"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
