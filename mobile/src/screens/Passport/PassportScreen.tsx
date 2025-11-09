@@ -6,12 +6,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function PassportScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasPassport, setHasPassport] = useState(true);
+  const [hasPassport, setHasPassport] = useState(false);
   const [passport, setPassport] = useState({
-    passportNumber: 'U12345678',
-    expiryDate: '2028-05-15',
+    passportNumber: '',
+    expiryDate: '',
     nationality: 'Türkiye',
-    fullName: 'Ahmet Yılmaz',
+    fullName: '',
   });
   const [editForm, setEditForm] = useState(passport);
 
@@ -28,7 +28,7 @@ export default function PassportScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#673AB7', '#5E35B1']}
+        colors={['#43e97b', '#38f9d7']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

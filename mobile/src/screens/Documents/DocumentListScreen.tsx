@@ -130,7 +130,7 @@ export default function DocumentListScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#FF9800', '#F57C00']}
+        colors={['#f093fb', '#f5576c']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

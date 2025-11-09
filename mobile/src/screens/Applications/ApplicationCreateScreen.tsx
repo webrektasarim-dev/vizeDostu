@@ -66,7 +66,7 @@ export default function ApplicationCreateScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1E88E5', '#1976D2']}
+        colors={['#667eea', '#764ba2']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

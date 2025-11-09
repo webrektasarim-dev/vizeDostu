@@ -97,7 +97,7 @@ export default function ChatScreen() {
       keyboardVerticalOffset={100}
     >
       <LinearGradient
-        colors={['#9C27B0', '#7B1FA2']}
+        colors={['#4facfe', '#00f2fe']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

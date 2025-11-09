@@ -53,7 +53,7 @@ export default function ApplicationListScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1E88E5', '#1976D2']}
+        colors={['#667eea', '#764ba2']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -105,6 +105,7 @@ export default function ApplicationListScreen({ navigation }: any) {
         style={styles.fab}
         onPress={() => navigation.navigate('ApplicationCreate')}
         color="#FFFFFF"
+        customSize={60}
       />
     </View>
   );
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#1E88E5',
+    backgroundColor: '#667eea',
     borderRadius: 16,
   },
 });
