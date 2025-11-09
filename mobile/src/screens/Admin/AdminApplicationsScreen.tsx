@@ -152,7 +152,7 @@ export default function AdminApplicationsScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#2196F3', '#1976D2']}
+        colors={['#8E24AA', '#6A1B9A', '#4A148C']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

@@ -85,7 +85,7 @@ export default function DashboardScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={['#1E88E5', '#1565C0', '#0D47A1']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -147,51 +147,51 @@ export default function DashboardScreen({ navigation }: any) {
         {/* Quick Actions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Icon name="lightning-bolt" size={22} color="#667eea" />
+            <Icon name="lightning-bolt" size={24} color="#FF9800" />
             <Text style={styles.sectionTitle}>Hızlı İşlemler</Text>
           </View>
           <View style={styles.quickActionsGrid}>
             <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('ApplicationCreate')}>
               <LinearGradient
-                colors={['#667eea', '#764ba2']}
+                colors={['#FF6B6B', '#FF8E53']}
                 style={styles.quickActionGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Icon name="file-document-plus" size={32} color="#FFFFFF" />
+                <Icon name="airplane-takeoff" size={34} color="#FFFFFF" />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Yeni Başvuru</Text>
             </Surface>
             <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Documents')}>
               <LinearGradient
-                colors={['#f093fb', '#f5576c']}
+                colors={['#FF9800', '#F57C00']}
                 style={styles.quickActionGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Icon name="folder-open" size={32} color="#FFFFFF" />
+                <Icon name="folder-multiple" size={34} color="#FFFFFF" />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Belgelerim</Text>
             </Surface>
             <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('AIAssistant')}>
               <LinearGradient
-                colors={['#4facfe', '#00f2fe']}
+                colors={['#9C27B0', '#7B1FA2']}
                 style={styles.quickActionGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Icon name="chat" size={32} color="#FFFFFF" />
+                <Icon name="robot-excited" size={34} color="#FFFFFF" />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>AI Asistan</Text>
             </Surface>
             <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Passport')}>
               <LinearGradient
-                colors={['#43e97b', '#38f9d7']}
+                colors={['#43A047', '#2E7D32']}
                 style={styles.quickActionGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Icon name="passport" size={32} color="#FFFFFF" />
+                <Icon name="passport" size={34} color="#FFFFFF" />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Pasaport</Text>
             </Surface>

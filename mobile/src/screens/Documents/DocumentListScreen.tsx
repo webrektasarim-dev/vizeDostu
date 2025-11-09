@@ -165,7 +165,7 @@ export default function DocumentListScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#FF9800', '#F57C00']}
+          colors={['#FF9800', '#F57C00', '#E65100']}
           style={styles.headerGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -204,7 +204,7 @@ export default function DocumentListScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#f093fb', '#f5576c']}
+        colors={['#FF9800', '#F57C00', '#E65100']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

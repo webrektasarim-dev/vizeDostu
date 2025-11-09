@@ -146,7 +146,7 @@ export default function AdminDocumentsScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#FF9800', '#F57C00']}
+        colors={['#00897B', '#00796B', '#00695C']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

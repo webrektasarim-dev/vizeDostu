@@ -105,7 +105,7 @@ export default function PassportScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#43e97b', '#38f9d7']}
+        colors={['#43A047', '#388E3C', '#2E7D32']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

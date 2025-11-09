@@ -76,7 +76,7 @@ export default function AdminDashboardScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F44336', '#D32F2F']}
+        colors={['#6A1B9A', '#4A148C', '#311B92']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
