@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -40,6 +40,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Kullanıcıyı admin yap (email ile)' })
   @ApiResponse({ status: 200, description: 'Kullanıcı admin yapıldı' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'gundogdukadir53@gmail.com',
+          description: 'Admin yapılacak kullanıcının email adresi'
+        }
+      },
+      required: ['email']
+    }
+  })
   async makeAdmin(@Body('email') email: string) {
     return this.authService.makeAdmin(email);
   }
