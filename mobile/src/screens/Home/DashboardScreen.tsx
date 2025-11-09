@@ -375,14 +375,15 @@ const styles = StyleSheet.create({
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
+    justifyContent: 'space-between',
   },
   quickAction: {
-    width: (width - 44) / 2,
+    width: '48%',
     borderRadius: borderRadius.lg,
     backgroundColor: colors.neutral.white,
     padding: spacing.lg,
     alignItems: 'center',
+    marginBottom: spacing.md,
     ...shadows.md,
   },
   quickActionGradient: {
