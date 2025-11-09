@@ -97,7 +97,7 @@ export default function ChatScreen() {
       keyboardVerticalOffset={100}
     >
       <LinearGradient
-        colors={['#4facfe', '#00f2fe']}
+        colors={['#9C27B0', '#7B1FA2', '#6A1B9A']}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: 16,
+    paddingBottom: 110, // Floating tab bar için boşluk
     backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',

@@ -186,6 +186,17 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
+        name="Passport"
+        component={PassportScreen}
+        options={{
+          title: 'Pasaport',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Icon name={focused ? "passport" : "passport"} size={26} color={color} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
