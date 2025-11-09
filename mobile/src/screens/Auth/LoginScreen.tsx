@@ -24,6 +24,10 @@ export default function LoginScreen({ navigation }: any) {
     setLoading(true);
     
     try {
+      // İlk önce backend'i uyandır (cold start'ı önle)
+      await AuthService.wakeUpBackend();
+      
+      // Şimdi login yap
       const { user, accessToken } = await AuthService.login(email, password);
       
       console.log('🔐 LOGIN SUCCESS:', user);

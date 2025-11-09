@@ -2,6 +2,30 @@ import { apiClient } from '../config/api.config';
 import * as SecureStore from 'expo-secure-store';
 
 export class AuthService {
+  // Backend'i uyandır (warm-up)
+  static async wakeUpBackend() {
+    try {
+      console.log('🔄 Waking up backend...');
+      const baseUrl = apiClient.defaults.baseURL?.replace('/api/v1', '') || '';
+      
+      // Simple fetch ile backend'i uyandır
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
+      await fetch(`${baseUrl}/health`, { 
+        method: 'GET',
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      console.log('✅ Backend is awake');
+      return true;
+    } catch (error) {
+      console.log('⚠️ Backend wake-up check (might be already awake)');
+      return false;
+    }
+  }
+
   static async register(email: string, password: string, fullName: string) {
     const response = await apiClient.post('/auth/register', {
       email,

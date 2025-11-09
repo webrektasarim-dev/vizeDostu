@@ -31,6 +31,10 @@ export default function RegisterScreen({ navigation }: any) {
 
     try {
       setLoading(true);
+      
+      // Backend'i uyandır
+      await AuthService.wakeUpBackend();
+      
       await AuthService.register(email, password, fullName);
       
       setTimeout(() => {
