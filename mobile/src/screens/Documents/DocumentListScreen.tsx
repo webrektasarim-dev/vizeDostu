@@ -230,12 +230,12 @@ export default function DocumentListScreen() {
 
         {/* Loading Göstergesi */}
         {uploading && uploadingDoc && (
-          <Card style={styles.loadingCard}>
-            <Card.Content style={styles.loadingContent}>
+          <Surface style={styles.loadingCard}>
+            <View style={styles.loadingContent}>
               <ActivityIndicator size="small" color="#2196F3" />
-              <Text style={styles.loadingText}>📤 {uploadingDoc} yükleniyor...</Text>
-            </Card.Content>
-          </Card>
+              <Text style={styles.uploadingText}>📤 {uploadingDoc} yükleniyor...</Text>
+            </View>
+          </Surface>
         )}
 
         {/* Gerekli Belgeler */}
@@ -385,14 +385,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#E3F2FD',
     elevation: 2,
+    padding: 16,
   },
   loadingContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 8,
   },
   loadingText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#757575',
+  },
+  uploadingText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#2196F3',

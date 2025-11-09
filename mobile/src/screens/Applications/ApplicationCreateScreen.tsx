@@ -39,7 +39,7 @@ export default function ApplicationCreateScreen({ navigation }: any) {
           {
             text: 'Belgelere Git',
             onPress: () => {
-              navigation.navigate('Belgeler');
+              navigation.navigate('Documents');
               setTimeout(() => navigation.goBack(), 100);
             }
           },

@@ -8,6 +8,8 @@ export class AdminService {
 
   // === DASHBOARD STATS ===
   async getDashboardStats() {
+    console.log('📊 Fetching admin dashboard stats...');
+    
     const [
       totalUsers,
       totalApplications,
@@ -42,7 +44,7 @@ export class AdminService {
       }),
     ]);
 
-    return {
+    const stats = {
       totalUsers,
       totalApplications,
       totalDocuments,
@@ -50,6 +52,9 @@ export class AdminService {
       completedApplications,
       todayRegistrations,
     };
+    
+    console.log('✅ Stats:', stats);
+    return stats;
   }
 
   // === USER MANAGEMENT ===
@@ -192,6 +197,8 @@ export class AdminService {
 
   // === APPLICATION MANAGEMENT ===
   async getAllApplications(page: number = 1, limit: number = 20, status?: string) {
+    console.log(`📋 Fetching applications (page: ${page}, limit: ${limit}, status: ${status || 'all'})`);
+    
     const skip = (page - 1) * limit;
 
     const where = status ? { status: status as ApplicationStatus } : {};
@@ -215,6 +222,8 @@ export class AdminService {
       this.prisma.application.count({ where }),
     ]);
 
+    console.log(`✅ Found ${applications.length} applications (total: ${total})`);
+    
     return {
       applications,
       pagination: {
@@ -277,6 +286,8 @@ export class AdminService {
 
   // === DOCUMENT MANAGEMENT ===
   async getAllDocuments(page: number = 1, limit: number = 20) {
+    console.log(`📁 Fetching documents (page: ${page}, limit: ${limit})`);
+    
     const skip = (page - 1) * limit;
 
     const [documents, total] = await Promise.all([
@@ -297,6 +308,8 @@ export class AdminService {
       this.prisma.document.count(),
     ]);
 
+    console.log(`✅ Found ${documents.length} documents (total: ${total})`);
+    
     return {
       documents,
       pagination: {

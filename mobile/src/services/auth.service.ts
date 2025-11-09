@@ -13,12 +13,15 @@ export class AuthService {
 
   static async login(email: string, password: string) {
     try {
+      console.log('🔐 Logging in:', email);
+      
       const response = await apiClient.post('/auth/login', {
         email,
         password,
       });
 
       const { user, accessToken, refreshToken } = response.data;
+      console.log('✅ Login success:', user.email, user.role);
 
       if (!user || !accessToken) {
         throw new Error('Invalid response from server');
@@ -26,9 +29,14 @@ export class AuthService {
 
       await SecureStore.setItemAsync('accessToken', accessToken);
       await SecureStore.setItemAsync('refreshToken', refreshToken);
+      console.log('💾 Tokens saved');
 
       return { user, accessToken };
-    } catch (error) {
+    } catch (error: any) {
+      console.error('❌ Login error:', error.message);
+      console.error('Status:', error.response?.status);
+      console.error('Response:', error.response?.data);
+      
       // Error'u yukarı fırlat ama önce token'ları temizle
       await SecureStore.deleteItemAsync('accessToken');
       await SecureStore.deleteItemAsync('refreshToken');
@@ -52,12 +60,21 @@ export class AuthService {
 
   static async getProfile() {
     try {
+      const token = await SecureStore.getItemAsync('accessToken');
+      console.log('📱 Getting profile...');
+      console.log('🔑 Token exists:', !!token);
+      console.log('🔑 Token (first 20 chars):', token?.substring(0, 20) + '...');
+      
       const response = await apiClient.get('/users/profile', {
         timeout: 5000, // 5 saniye max
       });
+      
+      console.log('✅ Profile loaded:', response.data.email);
       return response.data;
-    } catch (error) {
-      console.error('Get profile error:', error);
+    } catch (error: any) {
+      console.error('❌ Get profile error:', error.message);
+      console.error('Status:', error.response?.status);
+      console.error('Response:', error.response?.data);
       throw error;
     }
   }

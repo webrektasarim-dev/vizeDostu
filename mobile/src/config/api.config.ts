@@ -17,6 +17,9 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     const token = await SecureStore.getItemAsync('accessToken');
+    console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
+    console.log('🔑 Token in request:', token ? '✅ Present' : '❌ Missing');
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,11 +30,16 @@ apiClient.interceptors.request.use(
 
 // Response interceptor - Token refresh
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+    console.log(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status || 'TIMEOUT'}`);
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔄 Attempting token refresh...');
       originalRequest._retry = true;
 
       try {
@@ -42,10 +50,12 @@ apiClient.interceptors.response.use(
 
         const { accessToken } = response.data;
         await SecureStore.setItemAsync('accessToken', accessToken);
+        console.log('✅ Token refreshed successfully');
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        console.error('❌ Token refresh failed, logging out');
         await SecureStore.deleteItemAsync('accessToken');
         await SecureStore.deleteItemAsync('refreshToken');
         return Promise.reject(refreshError);

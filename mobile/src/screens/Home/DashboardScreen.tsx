@@ -160,7 +160,7 @@ export default function DashboardScreen({ navigation }: any) {
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Yeni Başvuru</Text>
             </Surface>
-            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Belgeler')}>
+            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Documents')}>
               <LinearGradient
                 colors={['#f093fb', '#f5576c']}
                 style={styles.quickActionGradient}
