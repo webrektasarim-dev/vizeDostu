@@ -125,10 +125,16 @@ export class DocumentsService {
       data: { status: 'COMPLETED' },
     });
 
-    await this.documentQueue.add('process-document', {
-      documentId: document.id,
-      documentType: document.documentType,
-    });
+    // Queue işlemini optional yap (Redis yoksa hata vermesin)
+    try {
+      await this.documentQueue.add('process-document', {
+        documentId: document.id,
+        documentType: document.documentType,
+      });
+      console.log('✅ Document queued for processing:', document.id);
+    } catch (queueError) {
+      console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
+    }
 
     return document;
   }
@@ -158,10 +164,16 @@ export class DocumentsService {
       },
     });
 
-    await this.documentQueue.add('process-document', {
-      documentId: document.id,
-      documentType: document.documentType,
-    });
+    // Queue işlemini optional yap (Redis yoksa hata vermesin)
+    try {
+      await this.documentQueue.add('process-document', {
+        documentId: document.id,
+        documentType: document.documentType,
+      });
+      console.log('✅ Document queued for processing:', document.id);
+    } catch (queueError) {
+      console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
+    }
 
     return document;
   }

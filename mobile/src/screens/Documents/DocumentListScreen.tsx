@@ -32,17 +32,27 @@ export default function DocumentListScreen() {
   const loadData = async () => {
     try {
       setLoading(true);
-      // Aktif başvuruyu al
-      const apps = await ApplicationService.getActiveApplications();
-      if (apps.length > 0) {
-        setActiveApplication(apps[0]); // İlk aktif başvuru
+      
+      // Aktif başvuruyu al (timeout olsa bile devam et)
+      try {
+        const apps = await ApplicationService.getActiveApplications();
+        if (apps.length > 0) {
+          setActiveApplication(apps[0]); // İlk aktif başvuru
+        }
+      } catch (appError) {
+        console.error('⚠️ Failed to load applications:', appError);
       }
       
-      // Belgeleri al
-      const docs = await DocumentService.getDocuments();
-      setUploadedDocuments(docs);
+      // Belgeleri al (timeout olsa bile devam et)
+      try {
+        const docs = await DocumentService.getDocuments();
+        setUploadedDocuments(docs);
+        console.log('✅ Documents loaded:', docs.length);
+      } catch (docError) {
+        console.error('⚠️ Failed to load documents:', docError);
+      }
     } catch (error) {
-      console.error('Load data error:', error);
+      console.error('❌ Load data error:', error);
     } finally {
       setLoading(false);
     }
@@ -61,18 +71,37 @@ export default function DocumentListScreen() {
 
       setUploading(true);
       setUploadingDoc(documentName);
+      
       await DocumentService.uploadDocument(
         file.uri, 
         documentId,
         activeApplication?.country
       );
-      Alert.alert('✅ Başarılı', `${documentName} başarıyla yüklendi!`);
-      await loadData();
-    } catch (error: any) {
-      Alert.alert('❌ Hata', error.message || 'Belge yüklenirken hata oluştu');
-    } finally {
+      
+      // Upload başarılı, state'i hemen temizle
       setUploading(false);
       setUploadingDoc('');
+      
+      // Başarı mesajı göster
+      setTimeout(() => {
+        Alert.alert('✅ Başarılı', `${documentName} başarıyla yüklendi!`);
+      }, 100);
+      
+      // Belgeleri arka planda yenile (timeout olsa bile UI bloklanmaz)
+      loadData().catch(err => {
+        console.log('⚠️ Background refresh failed:', err.message);
+      });
+      
+    } catch (error: any) {
+      console.error('❌ Upload error:', error);
+      
+      // Hata durumunda da state'i temizle
+      setUploading(false);
+      setUploadingDoc('');
+      
+      setTimeout(() => {
+        Alert.alert('❌ Hata', error.message || 'Belge yüklenirken hata oluştu');
+      }, 100);
     }
   };
 
