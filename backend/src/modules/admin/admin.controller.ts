@@ -51,6 +51,15 @@ export class AdminController {
     return this.adminService.updateUserStatus(id, isActive);
   }
 
+  @Put('users/:id/role')
+  @ApiOperation({ summary: 'Update user role' })
+  async updateUserRole(
+    @Param('id') id: string,
+    @Body('role') role: UserRole,
+  ) {
+    return this.adminService.updateUserRole(id, role);
+  }
+
   @Delete('users/:id')
   @ApiOperation({ summary: 'Delete user (soft delete)' })
   async deleteUser(@Param('id') id: string) {

@@ -35,8 +35,26 @@ export default function LoginScreen({ navigation }: any) {
         Alert.alert('✅ Admin Girişi', `Hoş geldiniz ${user.fullName}!\n\nAdmin paneline erişim sağlandı! 👑`);
       }
     } catch (error: any) {
-      console.error('Login error:', error);
-      Alert.alert('Giriş Hatası', error.response?.data?.message || 'Giriş yapılamadı');
+      console.error('❌ Login error:', error);
+      setLoading(false);
+      
+      let errorMessage = 'Giriş yapılamadı. Lütfen tekrar deneyin.';
+      
+      if (error.response) {
+        // Backend'den gelen hata
+        if (error.response.status === 401) {
+          errorMessage = 'Hatalı e-posta veya şifre!';
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Bağlantı zaman aşımına uğradı. Backend uyanıyor, lütfen 1 dakika bekleyip tekrar deneyin.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      Alert.alert('❌ Giriş Hatası', errorMessage);
+      return; // Erken çık, finally bloğuna gitme
     } finally {
       setLoading(false);
     }

@@ -101,6 +101,26 @@ export class AuthService {
     }
   }
 
+  async makeAdmin(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Kullanıcı bulunamadı');
+    }
+
+    // Update user role to ADMIN
+    const updatedUser = await this.usersService.updateRole(user.id, 'ADMIN');
+
+    return {
+      message: 'Kullanıcı admin yapıldı',
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        fullName: updatedUser.fullName,
+        role: updatedUser.role,
+      },
+    };
+  }
+
   private async generateTokens(userId: string, email: string) {
     const payload = { sub: userId, email };
 

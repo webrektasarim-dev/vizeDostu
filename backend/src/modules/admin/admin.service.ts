@@ -167,6 +167,21 @@ export class AdminService {
     return { message: 'User status updated', user };
   }
 
+  async updateUserRole(id: string, role: UserRole) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { role },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+      },
+    });
+
+    return { message: 'User role updated', user };
+  }
+
   async deleteUser(id: string) {
     await this.prisma.user.delete({
       where: { id },

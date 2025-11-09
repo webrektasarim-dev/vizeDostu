@@ -35,6 +35,14 @@ export class AuthController {
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto.refreshToken);
   }
+
+  @Post('make-admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Kullanıcıyı admin yap (email ile)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı admin yapıldı' })
+  async makeAdmin(@Body('email') email: string) {
+    return this.authService.makeAdmin(email);
+  }
 }
 
 
