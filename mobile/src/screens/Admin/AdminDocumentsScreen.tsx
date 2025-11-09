@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Alert, TouchableOpacity, Linking } from 'react-native';
 import { Text, Card, ActivityIndicator, Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,10 +37,16 @@ export default function AdminDocumentsScreen() {
 
   const handleViewDocument = async (doc: any) => {
     try {
-      const { Linking } = await import('react-native');
-      await Linking.openURL(doc.fileUrl);
+      const canOpen = await Linking.canOpenURL(doc.fileUrl);
+      if (canOpen) {
+        await Linking.openURL(doc.fileUrl);
+      } else {
+        Alert.alert('Belge Detayı', `Belge: ${doc.fileName}\n\nURL: ${doc.fileUrl}`, [
+          { text: 'Kapat' }
+        ]);
+      }
     } catch (error) {
-      Alert.alert('Belge Detayı', `Belge: ${doc.fileName}\nURL: ${doc.fileUrl}`, [
+      Alert.alert('Belge Detayı', `Belge: ${doc.fileName}\n\nURL: ${doc.fileUrl}`, [
         { text: 'Kapat' }
       ]);
     }

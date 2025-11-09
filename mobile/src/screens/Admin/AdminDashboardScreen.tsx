@@ -84,7 +84,7 @@ export default function AdminDashboardScreen({ navigation }: any) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.statsGrid}>
-          <Card style={[styles.statCard, { backgroundColor: '#E3F2FD' }]}>
+          <Card style={[styles.statCard, { backgroundColor: '#E3F2FD' }]} onPress={() => navigation.navigate('AdminUsers')}>
             <Card.Content style={styles.statContent}>
               <Icon name="account-group" size={40} color="#2196F3" />
               <Text style={styles.statValue}>{stats?.totalUsers || 0}</Text>
@@ -92,7 +92,7 @@ export default function AdminDashboardScreen({ navigation }: any) {
             </Card.Content>
           </Card>
 
-          <Card style={[styles.statCard, { backgroundColor: '#F3E5F5' }]}>
+          <Card style={[styles.statCard, { backgroundColor: '#F3E5F5' }]} onPress={() => navigation.navigate('AdminApplications')}>
             <Card.Content style={styles.statContent}>
               <Icon name="file-document-multiple" size={40} color="#9C27B0" />
               <Text style={styles.statValue}>{stats?.totalApplications || 0}</Text>
@@ -100,7 +100,7 @@ export default function AdminDashboardScreen({ navigation }: any) {
             </Card.Content>
           </Card>
 
-          <Card style={[styles.statCard, { backgroundColor: '#FFF3E0' }]}>
+          <Card style={[styles.statCard, { backgroundColor: '#FFF3E0' }]} onPress={() => navigation.navigate('AdminDocuments')}>
             <Card.Content style={styles.statContent}>
               <Icon name="folder-multiple" size={40} color="#FF9800" />
               <Text style={styles.statValue}>{stats?.totalDocuments || 0}</Text>
@@ -108,7 +108,7 @@ export default function AdminDashboardScreen({ navigation }: any) {
             </Card.Content>
           </Card>
 
-          <Card style={[styles.statCard, { backgroundColor: '#E8F5E9' }]}>
+          <Card style={[styles.statCard, { backgroundColor: '#E8F5E9' }]} onPress={() => navigation.navigate('AdminApplications')}>
             <Card.Content style={styles.statContent}>
               <Icon name="clock-check" size={40} color="#4CAF50" />
               <Text style={styles.statValue}>{stats?.activeApplications || 0}</Text>

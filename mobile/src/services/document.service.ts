@@ -2,6 +2,7 @@ import { apiClient } from '../config/api.config';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { Linking } from 'react-native';
 
 export class DocumentService {
   static async getDocuments() {
@@ -93,8 +94,12 @@ export class DocumentService {
     try {
       // Web URL ise tarayıcıda aç (mock storage için)
       if (fileUrl.includes('http')) {
-        const { Linking } = require('react-native');
-        await Linking.openURL(fileUrl);
+        const canOpen = await Linking.canOpenURL(fileUrl);
+        if (canOpen) {
+          await Linking.openURL(fileUrl);
+        } else {
+          throw new Error('URL açılamıyor');
+        }
       }
     } catch (error) {
       console.error('View error:', error);
