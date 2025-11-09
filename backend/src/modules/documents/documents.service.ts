@@ -125,16 +125,19 @@ export class DocumentsService {
       data: { status: 'COMPLETED' },
     });
 
-    // Queue işlemini optional yap (Redis yoksa hata vermesin)
-    try {
-      await this.documentQueue.add('process-document', {
+    console.log('✅ Document created:', document.id);
+
+    // Queue işlemini arka planda çalıştır (response'u bloklamadan)
+    setImmediate(() => {
+      this.documentQueue.add('process-document', {
         documentId: document.id,
         documentType: document.documentType,
+      }).then(() => {
+        console.log('✅ Document queued for processing:', document.id);
+      }).catch((queueError) => {
+        console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
       });
-      console.log('✅ Document queued for processing:', document.id);
-    } catch (queueError) {
-      console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
-    }
+    });
 
     return document;
   }
@@ -164,16 +167,19 @@ export class DocumentsService {
       },
     });
 
-    // Queue işlemini optional yap (Redis yoksa hata vermesin)
-    try {
-      await this.documentQueue.add('process-document', {
+    console.log('✅ Document created:', document.id);
+
+    // Queue işlemini arka planda çalıştır (response'u bloklamadan)
+    setImmediate(() => {
+      this.documentQueue.add('process-document', {
         documentId: document.id,
         documentType: document.documentType,
+      }).then(() => {
+        console.log('✅ Document queued for processing:', document.id);
+      }).catch((queueError) => {
+        console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
       });
-      console.log('✅ Document queued for processing:', document.id);
-    } catch (queueError) {
-      console.warn('⚠️ Queue unavailable, skipping background processing:', queueError.message);
-    }
+    });
 
     return document;
   }
