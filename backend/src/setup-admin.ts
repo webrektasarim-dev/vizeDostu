@@ -31,11 +31,13 @@ export async function setupAdmin() {
 
     // Admin hesabını kontrol et veya oluştur
     const adminEmail = 'gundogdukadir53@gmail.com';
+    const adminPassword = 'webrek2024';
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    
     let admin = await prisma.user.findUnique({ where: { email: adminEmail } });
 
     if (!admin) {
       // Admin yoksa oluştur
-      const hashedPassword = await bcrypt.hash('webrek2024', 10);
       admin = await prisma.user.create({
         data: {
           email: adminEmail,
@@ -49,12 +51,19 @@ export async function setupAdmin() {
       });
       console.log('✅ Admin created:', admin.email);
     } else {
-      // Admin varsa rolünü güncelle
+      // Admin varsa ŞİFREYİ VE ROLÜNÜ güncelle
       admin = await prisma.user.update({
         where: { id: admin.id },
-        data: { role: UserRole.ADMIN },
+        data: { 
+          passwordHash: hashedPassword,
+          role: UserRole.ADMIN,
+          fullName: 'Kadir Gündoğdu',
+          phoneNumber: '+905538546853',
+          isVerified: true,
+          isActive: true,
+        },
       });
-      console.log('✅ Admin role updated:', admin.email);
+      console.log('✅ Admin password & role updated:', admin.email);
     }
 
     console.log('');
