@@ -121,15 +121,29 @@ export default function AdminDocumentsScreen() {
                   </View>
                 </View>
 
-                <Button
-                  mode="outlined"
-                  onPress={() => handleDelete(doc)}
-                  style={styles.deleteButton}
-                  textColor="#F44336"
-                  icon="delete"
-                >
-                  Belgeyi Sil
-                </Button>
+                <View style={styles.actions}>
+                  <Button
+                    mode="contained"
+                    onPress={() => Alert.alert('Belge URL', doc.fileUrl, [
+                      { text: 'Kapat', style: 'cancel' },
+                      { text: 'Kopyala', onPress: () => console.log('Copy:', doc.fileUrl) }
+                    ])}
+                    style={styles.viewButton}
+                    buttonColor="#2196F3"
+                    icon="eye"
+                  >
+                    Görüntüle
+                  </Button>
+                  <Button
+                    mode="outlined"
+                    onPress={() => handleDelete(doc)}
+                    style={styles.deleteButton}
+                    textColor="#F44336"
+                    icon="delete"
+                  >
+                    Sil
+                  </Button>
+                </View>
               </Card.Content>
             </Card>
           ))}
@@ -226,8 +240,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#757575',
   },
-  deleteButton: {
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
     marginTop: 8,
+  },
+  viewButton: {
+    flex: 1,
+    borderRadius: 8,
+  },
+  deleteButton: {
+    flex: 1,
+    borderRadius: 8,
   },
 });
 

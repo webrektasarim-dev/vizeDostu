@@ -45,6 +45,30 @@ export default function DashboardScreen({ navigation }: any) {
     setRefreshing(false);
   };
 
+  const handleDelete = (appId: string, country: string) => {
+    Alert.alert(
+      'Başvuruyu Sil',
+      `${country} başvurusunu silmek istediğinizden emin misiniz?`,
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await ApplicationService.deleteApplication(appId);
+              Alert.alert('Başarılı', 'Başvuru silindi');
+              loadApplications();
+            } catch (error) {
+              console.error('Delete error:', error);
+              Alert.alert('Hata', 'Başvuru silinemedi');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleLogout = async () => {
     await AuthService.logout();
     dispatch(clearUser());
@@ -112,6 +136,7 @@ export default function DashboardScreen({ navigation }: any) {
                 country={app.country}
                 progress={app.progressPercentage}
                 onPress={() => navigation.navigate('ApplicationDetail', { country: app.country })}
+                onDelete={() => handleDelete(app.id, app.country)}
               />
             ))}
               </View>

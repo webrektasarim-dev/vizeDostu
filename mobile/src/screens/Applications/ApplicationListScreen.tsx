@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { Text, FAB, ActivityIndicator } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProgressCard } from '../../components';
@@ -39,6 +39,30 @@ export default function ApplicationListScreen({ navigation }: any) {
     setRefreshing(true);
     await loadApplications();
     setRefreshing(false);
+  };
+
+  const handleDelete = (appId: string, country: string) => {
+    Alert.alert(
+      'Başvuruyu Sil',
+      `${country} başvurusunu silmek istediğinizden emin misiniz?`,
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await ApplicationService.deleteApplication(appId);
+              Alert.alert('Başarılı', 'Başvuru silindi');
+              loadApplications();
+            } catch (error) {
+              console.error('Delete error:', error);
+              Alert.alert('Hata', 'Başvuru silinemedi');
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (loading) {
@@ -93,6 +117,7 @@ export default function ApplicationListScreen({ navigation }: any) {
                   status: app.status,
                   visaType: app.visaType 
                 })}
+                onDelete={() => handleDelete(app.id, app.country)}
               />
             ))}
           </View>

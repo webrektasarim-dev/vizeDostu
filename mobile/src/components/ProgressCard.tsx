@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card, Text, ProgressBar } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Card, Text, ProgressBar, IconButton } from 'react-native-paper';
 
 interface ProgressCardProps {
   country: string;
   progress: number;
   onPress?: () => void;
+  onDelete?: () => void;
 }
 
 export const ProgressCard: React.FC<ProgressCardProps> = ({
   country,
   progress,
   onPress,
+  onDelete,
 }) => {
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
@@ -28,8 +30,19 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
     <Card style={styles.card} onPress={onPress}>
       <Card.Content>
         <View style={styles.header}>
-          <Text style={styles.flag}>{getCountryFlag(country)}</Text>
-          <Text style={styles.country}>{country}</Text>
+          <View style={styles.countryInfo}>
+            <Text style={styles.flag}>{getCountryFlag(country)}</Text>
+            <Text style={styles.country}>{country}</Text>
+          </View>
+          {onDelete && (
+            <IconButton
+              icon="delete"
+              iconColor="#F44336"
+              size={20}
+              onPress={onDelete}
+              style={styles.deleteButton}
+            />
+          )}
         </View>
         <View style={styles.progressContainer}>
           <ProgressBar progress={progress / 100} color="#2196F3" style={styles.progressBar} />
@@ -50,7 +63,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  countryInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    margin: 0,
   },
   flag: {
     fontSize: 32,

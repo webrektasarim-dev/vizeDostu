@@ -22,5 +22,10 @@ export class ApplicationService {
     const response = await apiClient.post('/applications', data);
     return response.data;
   }
+
+  static async deleteApplication(id: string) {
+    const response = await apiClient.delete(`/applications/${id}`);
+    return response.data;
+  }
 }
 

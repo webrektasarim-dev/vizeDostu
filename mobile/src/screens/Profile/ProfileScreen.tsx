@@ -101,29 +101,6 @@ export default function ProfileScreen() {
           </Card.Content>
         </Card>
 
-        <Card style={styles.statsCard}>
-          <Card.Content>
-            <View style={styles.cardHeader}>
-              <Icon name="chart-box" size={24} color="#4CAF50" />
-              <Text style={styles.cardTitle}>İstatistikler</Text>
-            </View>
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>3</Text>
-                <Text style={styles.statLabel}>Başvuru</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>5</Text>
-                <Text style={styles.statLabel}>Belge</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>2</Text>
-                <Text style={styles.statLabel}>Randevu</Text>
-              </View>
-            </View>
-          </Card.Content>
-        </Card>
-
         <Button
           mode="contained"
           onPress={handleLogout}

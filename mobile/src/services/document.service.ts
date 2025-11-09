@@ -4,10 +4,15 @@ import * as DocumentPicker from 'expo-document-picker';
 export class DocumentService {
   static async getDocuments() {
     try {
-      const response = await apiClient.get('/documents');
+      const response = await apiClient.get('/documents', {
+        timeout: 60000, // 60 saniye (Render için)
+      });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Get documents error:', error);
+      if (error.code === 'ECONNABORTED') {
+        console.log('Documents request timeout, returning empty');
+      }
       return [];
     }
   }
