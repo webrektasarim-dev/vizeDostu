@@ -124,7 +124,7 @@ export default function DashboardScreen({ navigation }: any) {
             <Text style={styles.sectionTitle}>Hızlı İşlemler</Text>
           </View>
           <View style={styles.quickActionsGrid}>
-            <Surface style={styles.quickAction}>
+            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('ApplicationCreate')}>
               <LinearGradient
                 colors={['#667eea', '#764ba2']}
                 style={styles.quickActionGradient}
@@ -135,7 +135,7 @@ export default function DashboardScreen({ navigation }: any) {
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Yeni Başvuru</Text>
             </Surface>
-            <Surface style={styles.quickAction}>
+            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Belgeler')}>
               <LinearGradient
                 colors={['#f093fb', '#f5576c']}
                 style={styles.quickActionGradient}
@@ -146,7 +146,7 @@ export default function DashboardScreen({ navigation }: any) {
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Belgelerim</Text>
             </Surface>
-            <Surface style={styles.quickAction}>
+            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('AIAssistant')}>
               <LinearGradient
                 colors={['#4facfe', '#00f2fe']}
                 style={styles.quickActionGradient}
@@ -157,7 +157,7 @@ export default function DashboardScreen({ navigation }: any) {
               </LinearGradient>
               <Text style={styles.quickActionTitle}>AI Asistan</Text>
             </Surface>
-            <Surface style={styles.quickAction}>
+            <Surface style={styles.quickAction} onTouchEnd={() => navigation.navigate('Passport')}>
               <LinearGradient
                 colors={['#43e97b', '#38f9d7']}
                 style={styles.quickActionGradient}
