@@ -18,7 +18,12 @@ apiClient.interceptors.request.use(
   async (config) => {
     const token = await SecureStore.getItemAsync('accessToken');
     console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
-    console.log('🔑 Token in request:', token ? '✅ Present' : '❌ Missing');
+    
+    // Login/Register'da token olmaması normal
+    const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+    if (!isAuthEndpoint) {
+      console.log('🔑 Token:', token ? '✅ Present' : '❌ Missing');
+    }
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
