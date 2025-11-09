@@ -1,4 +1,5 @@
 import { apiClient } from '../config/api.config';
+import { AuthService } from './auth.service';
 
 export class ApplicationService {
   static async getActiveApplications() {
@@ -32,6 +33,9 @@ export class ApplicationService {
   }
 
   static async createApplication(data: any) {
+    // Backend'i uyandır (cold start önleme)
+    await AuthService.wakeUpBackend();
+    
     const response = await apiClient.post('/applications', data);
     return response.data;
   }

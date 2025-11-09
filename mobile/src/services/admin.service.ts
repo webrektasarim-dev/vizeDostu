@@ -1,4 +1,5 @@
 import { apiClient } from '../config/api.config';
+import { AuthService } from './auth.service';
 
 export interface AdminStats {
   totalUsers: number;
@@ -93,6 +94,10 @@ export const AdminService = {
 
   async updateApplicationStatus(id: string, status: string) {
     console.log(`🔄 Admin updating application ${id} to status: ${status}`);
+    
+    // Backend'i uyandır (cold start önleme)
+    await AuthService.wakeUpBackend();
+    
     const response = await apiClient.put(`/admin/applications/${id}/status`, { status });
     console.log(`✅ Admin update response:`, response.data);
     return response.data;

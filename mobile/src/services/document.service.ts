@@ -3,6 +3,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Linking } from 'react-native';
+import { AuthService } from './auth.service';
 
 export class DocumentService {
   static async getDocuments() {
@@ -22,6 +23,9 @@ export class DocumentService {
 
   static async uploadDocument(uri: string, documentType: string, country?: string) {
     try {
+      // Backend'i uyandır (cold start önleme)
+      await AuthService.wakeUpBackend();
+      
       // Simple upload for now - chunk upload can be added later
       const formData = new FormData();
       

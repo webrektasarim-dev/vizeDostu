@@ -1,4 +1,5 @@
 import { apiClient } from '../config/api.config';
+import { AuthService } from './auth.service';
 
 export class PassportService {
   static async getPassport() {
@@ -29,6 +30,9 @@ export class PassportService {
   }) {
     try {
       console.log('💾 Saving passport:', data);
+      
+      // Backend'i uyandır (cold start önleme)
+      await AuthService.wakeUpBackend();
       
       // Eğer görsel varsa, önce yükle ve documentId al
       let documentId = '';
