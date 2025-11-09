@@ -7,6 +7,11 @@ export class ApplicationService {
       const response = await apiClient.get('/applications');
       console.log('📋 Raw applications:', response.data);
       
+      // Her başvurunun durumunu logla
+      response.data.forEach((app: any) => {
+        console.log(`   - ${app.country}: ${app.status} (progress: ${app.progressPercentage}%)`);
+      });
+      
       const activeApps = response.data.filter((app: any) => 
         app.status !== 'COMPLETED' && app.status !== 'CANCELLED'
       );

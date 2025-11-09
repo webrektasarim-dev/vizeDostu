@@ -92,7 +92,9 @@ export const AdminService = {
   },
 
   async updateApplicationStatus(id: string, status: string) {
+    console.log(`🔄 Admin updating application ${id} to status: ${status}`);
     const response = await apiClient.put(`/admin/applications/${id}/status`, { status });
+    console.log(`✅ Admin update response:`, response.data);
     return response.data;
   },
 

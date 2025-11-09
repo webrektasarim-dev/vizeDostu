@@ -259,6 +259,8 @@ export class AdminService {
   }
 
   async updateApplicationStatus(id: string, status: string) {
+    console.log(`🔄 Updating application ${id} status to: ${status}`);
+    
     const application = await this.prisma.application.update({
       where: { id },
       data: { status: status as ApplicationStatus },
@@ -272,6 +274,9 @@ export class AdminService {
         },
       },
     });
+
+    console.log(`✅ Application status updated for user: ${application.user.fullName} (${application.user.email})`);
+    console.log(`   New status: ${application.status}`);
 
     return { message: 'Application status updated', application };
   }
