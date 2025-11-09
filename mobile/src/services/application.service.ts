@@ -13,12 +13,13 @@ export class ApplicationService {
         console.log(`   - ${app.country}: ${app.status} (progress: ${app.progressPercentage}%)`);
       });
       
-      const activeApps = response.data.filter((app: any) => 
-        app.status !== 'COMPLETED' && app.status !== 'CANCELLED'
+      // CANCELLED hariç tümünü göster (COMPLETED dahil)
+      const allApps = response.data.filter((app: any) => 
+        app.status !== 'CANCELLED'
       );
-      console.log('✅ Active applications:', activeApps.length);
+      console.log('✅ All applications (including completed):', allApps.length);
       
-      return activeApps;
+      return allApps;
     } catch (error: any) {
       console.error('❌ Get applications error:', error);
       console.error('Response:', error.response?.data);

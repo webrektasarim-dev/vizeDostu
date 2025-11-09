@@ -135,6 +135,7 @@ export default function DashboardScreen({ navigation }: any) {
                 key={app.id}
                 country={app.country}
                 progress={app.progressPercentage}
+                status={app.status}
                 onPress={() => navigation.navigate('ApplicationDetail', { country: app.country })}
                 onDelete={() => handleDelete(app.id, app.country)}
               />

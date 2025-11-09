@@ -7,6 +7,34 @@ export class PassportsService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createDto: CreatePassportDto) {
+    console.log(`💾 Creating/updating passport for user: ${userId}`);
+    console.log(`   Passport Number: ${createDto.passportNumber}`);
+    
+    // Aynı pasaport numarasına sahip kayıt var mı kontrol et
+    const existing = await this.prisma.passport.findFirst({
+      where: {
+        passportNumber: createDto.passportNumber,
+        userId,
+      },
+    });
+
+    if (existing) {
+      // Varsa güncelle (upsert)
+      console.log('   📝 Updating existing passport...');
+      return this.prisma.passport.update({
+        where: { id: existing.id },
+        data: {
+          issueDate: new Date(createDto.issueDate),
+          expiryDate: new Date(createDto.expiryDate),
+          issuingCountry: createDto.issuingCountry,
+          documentId: createDto.documentId,
+        },
+        include: { document: true },
+      });
+    }
+
+    // Yoksa yeni oluştur
+    console.log('   ✨ Creating new passport...');
     return this.prisma.passport.create({
       data: {
         userId,
@@ -16,6 +44,7 @@ export class PassportsService {
         issuingCountry: createDto.issuingCountry,
         documentId: createDto.documentId,
       },
+      include: { document: true },
     });
   }
 

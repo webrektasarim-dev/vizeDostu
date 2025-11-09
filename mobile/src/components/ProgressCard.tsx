@@ -5,6 +5,7 @@ import { Card, Text, ProgressBar, IconButton } from 'react-native-paper';
 interface ProgressCardProps {
   country: string;
   progress: number;
+  status?: string;
   onPress?: () => void;
   onDelete?: () => void;
 }
@@ -12,6 +13,7 @@ interface ProgressCardProps {
 export const ProgressCard: React.FC<ProgressCardProps> = ({
   country,
   progress,
+  status,
   onPress,
   onDelete,
 }) => {
@@ -25,6 +27,19 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
     };
     return flags[country] || '🌍';
   };
+
+  const getStatusInfo = (status?: string) => {
+    const statusMap: Record<string, { text: string; color: string; bgColor: string }> = {
+      'PREPARING_DOCUMENTS': { text: 'Evrak Hazırlanıyor', color: '#FF9800', bgColor: '#FFF3E0' },
+      'APPOINTMENT_TAKEN': { text: 'Randevu Alındı', color: '#2196F3', bgColor: '#E3F2FD' },
+      'AT_CONSULATE': { text: 'Konsoloslukta', color: '#9C27B0', bgColor: '#F3E5F5' },
+      'COMPLETED': { text: '✅ Tamamlandı', color: '#4CAF50', bgColor: '#E8F5E9' },
+      'REJECTED': { text: 'Reddedildi', color: '#F44336', bgColor: '#FFEBEE' },
+    };
+    return statusMap[status || ''] || { text: 'İşlemde', color: '#757575', bgColor: '#F5F5F5' };
+  };
+
+  const statusInfo = getStatusInfo(status);
 
   return (
     <Card style={styles.card} onPress={onPress}>
@@ -44,9 +59,21 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
             />
           )}
         </View>
+        
+        {/* Status Badge */}
+        <View style={[styles.statusBadge, { backgroundColor: statusInfo.bgColor }]}>
+          <Text style={[styles.statusText, { color: statusInfo.color }]}>
+            {statusInfo.text}
+          </Text>
+        </View>
+        
         <View style={styles.progressContainer}>
-          <ProgressBar progress={progress / 100} color="#2196F3" style={styles.progressBar} />
-          <Text style={styles.progressText}>{progress}%</Text>
+          <ProgressBar 
+            progress={progress / 100} 
+            color={statusInfo.color} 
+            style={styles.progressBar} 
+          />
+          <Text style={[styles.progressText, { color: statusInfo.color }]}>{progress}%</Text>
         </View>
       </Card.Content>
     </Card>
@@ -81,6 +108,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#212121',
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  statusText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   progressContainer: {
     flexDirection: 'row',
