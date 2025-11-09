@@ -65,15 +65,14 @@ npx expo start
 
 iPhone'da Expo Go ile QR tarayın.
 
-## 🧪 Test Hesapları
+## 🧪 Admin Hesabı
 ```
-👑 Admin: admin@admin.com / Test123!
-👤 User:  test@vizedostu.com / Test123!
+👑 Admin: gundogdukadir53@gmail.com
+🔑 Şifre: webrek2024
+📱 Tel: +905538546853
 ```
 
-**Not:** İlk kullanımda Swagger'dan kayıt olmanız gerekebilir:
-- https://vizedostu-backend.onrender.com/api/docs
-- POST /api/v1/auth/register
+**Not:** İlk deploy sonrası Render'da seed çalışacak ve admin hesabı otomatik oluşacak.
 
 ## 📱 Ekranlar
 

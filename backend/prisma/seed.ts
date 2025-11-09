@@ -6,19 +6,21 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Hash password
-  const hashedPassword = await bcrypt.hash('Test123!', 10);
+  // Tüm mevcut kullanıcıları sil
+  console.log('🗑️ Deleting all existing users...');
+  await prisma.user.deleteMany({});
+  console.log('✅ All users deleted');
 
-  // Create or update admin user
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@admin.com' },
-    update: {
-      role: UserRole.ADMIN,
-    },
-    create: {
-      email: 'admin@admin.com',
+  // Hash password
+  const hashedPassword = await bcrypt.hash('webrek2024', 10);
+
+  // Create admin user (Kadir)
+  const adminUser = await prisma.user.create({
+    data: {
+      email: 'gundogdukadir53@gmail.com',
       passwordHash: hashedPassword,
-      fullName: 'Admin',
+      fullName: 'Kadir Gündoğdu',
+      phoneNumber: '+905538546853',
       role: UserRole.ADMIN,
       isVerified: true,
       isActive: true,
@@ -26,28 +28,10 @@ async function main() {
   });
 
   console.log('✅ Admin user created:', adminUser.email);
-
-  // Create or update regular test user
-  const testUser = await prisma.user.upsert({
-    where: { email: 'test@vizedostu.com' },
-    update: {},
-    create: {
-      email: 'test@vizedostu.com',
-      passwordHash: hashedPassword,
-      fullName: 'Test User',
-      role: UserRole.USER,
-      isVerified: true,
-      isActive: true,
-    },
-  });
-
-  console.log('✅ Test user created:', testUser.email);
-
-  console.log('✅ Database seeded successfully!');
   console.log('');
   console.log('📧 Login credentials:');
-  console.log('   👑 Admin: admin@admin.com / Test123!');
-  console.log('   👤 User:  test@vizedostu.com / Test123!');
+  console.log('   👑 Admin: gundogdukadir53@gmail.com / webrek2024');
+  console.log('   📱 Phone: +905538546853');
 }
 
 main()

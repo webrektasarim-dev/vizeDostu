@@ -14,43 +14,40 @@
 
 ### 1️⃣ Admin Hesabı Oluştur ve Admin Yap
 
-#### Adım 1: Swagger'dan Kayıt Ol
-1. Tarayıcıda aç: https://vizedostu-backend.onrender.com/api/docs
+#### Deploy Tamamlanınca:
+
+Render'da seed otomatik çalışacak ve admin hesabı oluşacak:
+
+```
+Email: gundogdukadir53@gmail.com
+Şifre: webrek2024
+Tel: +905538546853
+Rol: ADMIN
+```
+
+**Eğer seed çalışmazsa** Swagger'dan manuel oluşturun:
+
+1. https://vizedostu-backend.onrender.com/api/docs
 2. **POST /api/v1/auth/register** → Try it out
 3. Body:
 ```json
 {
-  "email": "admin@admin.com",
-  "password": "Test123!",
-  "fullName": "Admin",
-  "phoneNumber": "+905550000000"
+  "email": "gundogdukadir53@gmail.com",
+  "password": "webrek2024",
+  "fullName": "Kadir Gündoğdu",
+  "phoneNumber": "+905538546853"
 }
 ```
-4. Execute
-5. Response 201 = ✅ Kullanıcı oluştu
+4. Execute → Response 201
 
-#### Adım 2: Admin Rolü Ver
-1. Aynı Swagger'da **POST /api/v1/auth/make-admin** bulun
-2. Try it out
-3. Body:
+5. **POST /api/v1/auth/make-admin** → Try it out
+6. Body:
 ```json
 {
-  "email": "admin@admin.com"
+  "email": "gundogdukadir53@gmail.com"
 }
 ```
-4. Execute
-5. Response 200 = ✅ Admin rolü verildi
-
-#### Adım 3: Test Kullanıcısı Oluştur
-Aynı şekilde:
-```json
-{
-  "email": "test@vizedostu.com",
-  "password": "Test123!",
-  "fullName": "Test User",
-  "phoneNumber": "+905551234567"
-}
-```
+7. Execute → Response 200 ✅ Admin rolü verildi
 
 ---
 
