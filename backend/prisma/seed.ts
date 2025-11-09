@@ -11,14 +11,14 @@ async function main() {
 
   // Create or update admin user
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@vizedostu.com' },
+    where: { email: 'admin@admin.com' },
     update: {
       role: UserRole.ADMIN,
     },
     create: {
-      email: 'admin@vizedostu.com',
+      email: 'admin@admin.com',
       passwordHash: hashedPassword,
-      fullName: 'Admin User',
+      fullName: 'Admin',
       role: UserRole.ADMIN,
       isVerified: true,
       isActive: true,
@@ -46,8 +46,8 @@ async function main() {
   console.log('✅ Database seeded successfully!');
   console.log('');
   console.log('📧 Login credentials:');
-  console.log('   Admin: admin@vizedostu.com / Test123!');
-  console.log('   User:  test@vizedostu.com / Test123!');
+  console.log('   👑 Admin: admin@admin.com / Test123!');
+  console.log('   👤 User:  test@vizedostu.com / Test123!');
 }
 
 main()
