@@ -6,8 +6,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Tüm mevcut kullanıcıları sil
-  console.log('🗑️ Deleting all existing users...');
+  // Önce ilişkili tabloları temizle (cascade için)
+  console.log('🗑️ Deleting all data...');
+  await prisma.chatMessage.deleteMany({});
+  await prisma.notification.deleteMany({});
+  await prisma.appointment.deleteMany({});
+  await prisma.document.deleteMany({});
+  await prisma.application.deleteMany({});
+  await prisma.passport.deleteMany({});
+  console.log('✅ Related data deleted');
+
+  // Tüm kullanıcıları sil
+  console.log('🗑️ Deleting all users...');
   await prisma.user.deleteMany({});
   console.log('✅ All users deleted');
 
