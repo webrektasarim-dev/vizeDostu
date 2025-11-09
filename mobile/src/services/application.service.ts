@@ -3,12 +3,20 @@ import { apiClient } from '../config/api.config';
 export class ApplicationService {
   static async getActiveApplications() {
     try {
+      console.log('🔍 Fetching user applications...');
       const response = await apiClient.get('/applications');
-      return response.data.filter((app: any) => 
+      console.log('📋 Raw applications:', response.data);
+      
+      const activeApps = response.data.filter((app: any) => 
         app.status !== 'COMPLETED' && app.status !== 'CANCELLED'
       );
-    } catch (error) {
-      console.error('Get applications error:', error);
+      console.log('✅ Active applications:', activeApps.length);
+      
+      return activeApps;
+    } catch (error: any) {
+      console.error('❌ Get applications error:', error);
+      console.error('Response:', error.response?.data);
+      console.error('Status:', error.response?.status);
       return [];
     }
   }
