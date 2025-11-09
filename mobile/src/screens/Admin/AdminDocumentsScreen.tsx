@@ -185,54 +185,54 @@ export default function AdminDocumentsScreen() {
 
                 {/* Kullanıcının Belgeleri - Sadece açıksa göster */}
                 {isExpanded && group.documents.map((doc: any) => (
-                <Card key={doc.id} style={styles.docCard}>
-                  <Card.Content>
-                    <View style={styles.docHeader}>
-                      <Icon name="file-document" size={32} color="#2196F3" />
-                      <View style={styles.docInfo}>
-                        <Text style={styles.fileName}>{doc.fileName}</Text>
-                        <View style={styles.docDetails}>
-                          <View style={styles.detailRow}>
-                            <Icon name="file-chart" size={14} color="#757575" />
-                            <Text style={styles.detailText}>
-                              {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
-                            </Text>
-                          </View>
-                          <View style={styles.detailRow}>
-                            <Icon name="calendar" size={14} color="#757575" />
-                            <Text style={styles.detailText}>
-                              {new Date(doc.uploadedAt).toLocaleDateString('tr-TR')}
-                            </Text>
+                  <Card key={doc.id} style={styles.docCard}>
+                    <Card.Content>
+                      <View style={styles.docHeader}>
+                        <Icon name="file-document" size={32} color="#2196F3" />
+                        <View style={styles.docInfo}>
+                          <Text style={styles.fileName}>{doc.fileName}</Text>
+                          <View style={styles.docDetails}>
+                            <View style={styles.detailRow}>
+                              <Icon name="file-chart" size={14} color="#757575" />
+                              <Text style={styles.detailText}>
+                                {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
+                              </Text>
+                            </View>
+                            <View style={styles.detailRow}>
+                              <Icon name="calendar" size={14} color="#757575" />
+                              <Text style={styles.detailText}>
+                                {new Date(doc.uploadedAt).toLocaleDateString('tr-TR')}
+                              </Text>
+                            </View>
                           </View>
                         </View>
                       </View>
-                    </View>
 
-                    <View style={styles.actions}>
-                      <Button
-                        mode="contained"
-                        onPress={() => handleViewDocument(doc)}
-                        style={styles.viewButton}
-                        buttonColor="#2196F3"
-                        icon="eye"
-                        compact
-                      >
-                        Aç
-                      </Button>
-                      <Button
-                        mode="outlined"
-                        onPress={() => handleDelete(doc)}
-                        style={styles.deleteButton}
-                        textColor="#F44336"
-                        icon="delete"
-                        compact
-                      >
-                        Sil
-                      </Button>
-                    </View>
-                  </Card.Content>
-                </Card>
-              )))}
+                      <View style={styles.actions}>
+                        <Button
+                          mode="contained"
+                          onPress={() => handleViewDocument(doc)}
+                          style={styles.viewButton}
+                          buttonColor="#2196F3"
+                          icon="eye"
+                          compact
+                        >
+                          Aç
+                        </Button>
+                        <Button
+                          mode="outlined"
+                          onPress={() => handleDelete(doc)}
+                          style={styles.deleteButton}
+                          textColor="#F44336"
+                          icon="delete"
+                          compact
+                        >
+                          Sil
+                        </Button>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                ))}
               </View>
             );
           })}
