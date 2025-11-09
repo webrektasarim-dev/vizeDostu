@@ -53,13 +53,10 @@ export class PassportService {
       const response = await apiClient.post('/passports', payload);
       console.log('✅ Passport saved:', response.data);
       
-      // Response'a kullanıcı bilgilerini de ekle
-      return {
-        ...response.data,
-        fullName: data.fullName,
-        nationality: data.nationality,
-        imageUrl: data.imageUri,
-      };
+      // Pasaportu tekrar çek (document ilişkisi ile)
+      const savedPassport = await apiClient.get(`/passports/${response.data.id}`);
+      
+      return savedPassport.data;
     } catch (error) {
       console.error('Save passport error:', error);
       throw error;

@@ -69,17 +69,27 @@ Görevlerin:
       let aiResponse: string;
       
       try {
+        console.log('🤖 Calling OpenAI GPT-4...');
+        console.log('📝 Message:', message);
+        console.log('📚 History length:', history.length);
+        
         const completion = await this.openai.chat.completions.create({
-          model: this.configService.get<string>('OPENAI_MODEL') || 'gpt-4-turbo-preview',
+          model: 'gpt-4o-mini', // Daha hızlı ve ucuz
           messages,
-          max_tokens: parseInt(this.configService.get<string>('OPENAI_MAX_TOKENS') || '2000'),
-          temperature: 0.7,
+          max_tokens: 1000,
+          temperature: 0.8,
         });
+        
         aiResponse = completion.choices[0]?.message?.content || 'Üzgünüm, yanıt oluşturamadım.';
-      } catch (openaiError) {
-        this.logger.warn('OpenAI error, using fallback response:', openaiError.message);
+        console.log('✅ OpenAI response received:', aiResponse.substring(0, 50) + '...');
+        
+      } catch (openaiError: any) {
+        this.logger.error('❌ OpenAI error:', openaiError.message);
+        console.error('OpenAI Error Details:', openaiError);
+        
         // Demo mode - OpenAI bağlanamazsa akıllı fallback
         aiResponse = this.getDemoResponse(message);
+        console.log('⚠️ Using fallback response');
       }
 
       // Save AI response

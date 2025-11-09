@@ -261,9 +261,24 @@ export class AdminService {
   async updateApplicationStatus(id: string, status: string) {
     console.log(`🔄 Updating application ${id} status to: ${status}`);
     
+    // Status'e göre progress percentage belirle
+    const progressMap: Record<string, number> = {
+      'PREPARING_DOCUMENTS': 25,
+      'APPOINTMENT_TAKEN': 50,
+      'AT_CONSULATE': 75,
+      'COMPLETED': 100,
+      'REJECTED': 0,
+      'CANCELLED': 0,
+    };
+    
+    const progressPercentage = progressMap[status] || 0;
+    
     const application = await this.prisma.application.update({
       where: { id },
-      data: { status: status as ApplicationStatus },
+      data: { 
+        status: status as ApplicationStatus,
+        progressPercentage,
+      },
       include: {
         user: {
           select: {
@@ -276,7 +291,7 @@ export class AdminService {
     });
 
     console.log(`✅ Application status updated for user: ${application.user.fullName} (${application.user.email})`);
-    console.log(`   New status: ${application.status}`);
+    console.log(`   New status: ${application.status}, Progress: ${application.progressPercentage}%`);
 
     return { message: 'Application status updated', application };
   }

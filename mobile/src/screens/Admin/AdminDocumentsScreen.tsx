@@ -69,6 +69,25 @@ export default function AdminDocumentsScreen() {
 
   const userGroups = groupDocumentsByUser();
 
+  // Document type'ı Türkçe'ye çevir
+  const getDocumentTypeName = (type: string) => {
+    const typeMap: Record<string, string> = {
+      'passport': '🛂 Pasaport',
+      'photo': '📸 Fotoğraf',
+      'bank_statement': '🏦 Banka Ekstresi',
+      'employment_letter': '💼 İş Mektubu',
+      'hotel_reservation': '🏨 Otel Rezervasyonu',
+      'flight_ticket': '✈️ Uçak Bileti',
+      'travel_insurance': '🛡️ Seyahat Sigortası',
+      'invitation_letter': '✉️ Davet Mektubu',
+      'tax_return': '📄 Vergi Belgesi',
+      'birth_certificate': '👶 Doğum Belgesi',
+      'marriage_certificate': '💍 Evlilik Belgesi',
+      'address_proof': '🏠 Adres Belgesi',
+    };
+    return typeMap[type] || `📄 ${type}`;
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await loadDocuments();
@@ -190,6 +209,7 @@ export default function AdminDocumentsScreen() {
                       <View style={styles.docHeader}>
                         <Icon name="file-document" size={32} color="#2196F3" />
                         <View style={styles.docInfo}>
+                          <Text style={styles.documentType}>{getDocumentTypeName(doc.documentType)}</Text>
                           <Text style={styles.fileName}>{doc.fileName}</Text>
                           <View style={styles.docDetails}>
                             <View style={styles.detailRow}>
@@ -344,11 +364,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
     gap: 8,
   },
-  fileName: {
+  documentType: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#212121',
+    color: '#2196F3',
     marginBottom: 4,
+  },
+  fileName: {
+    fontSize: 13,
+    color: '#757575',
+    marginBottom: 6,
   },
   detailRow: {
     flexDirection: 'row',
