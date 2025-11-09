@@ -5,8 +5,12 @@ import { ConfigService } from '@nestjs/config';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { setupAdmin } from './setup-admin';
 
 async function bootstrap() {
+  // Setup admin (her startup'ta çalışır)
+  await setupAdmin();
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
