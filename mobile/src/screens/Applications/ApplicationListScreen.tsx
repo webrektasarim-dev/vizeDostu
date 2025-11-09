@@ -7,6 +7,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { ApplicationService } from '../../services/application.service';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
 export default function ApplicationListScreen({ navigation }: any) {
   const [applications, setApplications] = useState([]);

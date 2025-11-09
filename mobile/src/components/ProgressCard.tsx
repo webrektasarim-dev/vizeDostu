@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card, Text, ProgressBar, IconButton } from 'react-native-paper';
+import { colors, shadows, borderRadius, spacing } from '../theme/colors';
 
 interface ProgressCardProps {
   country: string;
@@ -82,10 +83,10 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 8,
-    borderRadius: 16,
-    elevation: 4,
-    backgroundColor: '#FFFFFF',
+    marginVertical: spacing.sm,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.neutral.white,
+    ...shadows.md,
   },
   header: {
     flexDirection: 'row',

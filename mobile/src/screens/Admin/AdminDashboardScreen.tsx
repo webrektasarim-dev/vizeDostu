@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AdminService } from '../../services/admin.service';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
 export default function AdminDashboardScreen({ navigation }: any) {
   const [stats, setStats] = useState<any>(null);

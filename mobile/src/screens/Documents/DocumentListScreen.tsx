@@ -9,6 +9,7 @@ import { getCountryConfig } from '../../config/countries.config';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { EmptyState } from '../../components/EmptyState';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors, shadows, borderRadius, spacing } from '../../theme/colors';
 
 export default function DocumentListScreen() {
   const [uploading, setUploading] = useState(false);
