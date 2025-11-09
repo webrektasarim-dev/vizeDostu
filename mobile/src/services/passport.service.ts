@@ -4,14 +4,19 @@ export class PassportService {
   static async getPassport() {
     try {
       const response = await apiClient.get('/passports');
-      return response.data;
+      // İlk pasaportu döndür (kullanıcının tek pasaportu olduğunu varsayıyoruz)
+      const passports = response.data;
+      if (passports && passports.length > 0) {
+        return passports[0];
+      }
+      return null;
     } catch (error: any) {
       if (error.response?.status === 404) {
         // Pasaport bulunamadı, normal
         return null;
       }
       console.error('Get passport error:', error);
-      throw error;
+      return null;
     }
   }
 
@@ -25,23 +30,32 @@ export class PassportService {
     try {
       console.log('💾 Saving passport:', data);
       
-      // Eğer görsel varsa, önce yükle
-      let imageUrl = '';
+      // Eğer görsel varsa, önce yükle ve documentId al
+      let documentId = '';
       if (data.imageUri) {
-        imageUrl = await this.uploadPassportImage(data.imageUri);
+        const doc = await this.uploadPassportImage(data.imageUri);
+        documentId = doc.id;
       }
 
+      // Backend'e uygun payload
       const payload = {
         passportNumber: data.passportNumber,
-        fullName: data.fullName,
-        nationality: data.nationality,
+        issueDate: new Date().toISOString().split('T')[0], // Bugün
         expiryDate: data.expiryDate,
-        ...(imageUrl && { imageUrl }),
+        issuingCountry: data.nationality === 'Türkiye' ? 'TUR' : data.nationality,
+        ...(documentId && { documentId }),
       };
 
       const response = await apiClient.post('/passports', payload);
       console.log('✅ Passport saved:', response.data);
-      return response.data;
+      
+      // Response'a kullanıcı bilgilerini de ekle
+      return {
+        ...response.data,
+        fullName: data.fullName,
+        nationality: data.nationality,
+        imageUrl: data.imageUri,
+      };
     } catch (error) {
       console.error('Save passport error:', error);
       throw error;
@@ -70,7 +84,8 @@ export class PassportService {
         },
       });
 
-      return response.data.fileUrl;
+      // Document'in tamamını döndür (id ve fileUrl dahil)
+      return response.data;
     } catch (error) {
       console.error('Upload passport image error:', error);
       throw error;

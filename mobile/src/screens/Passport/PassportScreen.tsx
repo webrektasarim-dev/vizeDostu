@@ -5,9 +5,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import { PassportService } from '../../services/passport.service';
 
 export default function PassportScreen() {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,7 +19,7 @@ export default function PassportScreen() {
     passportNumber: '',
     expiryDate: '',
     nationality: 'Türkiye',
-    fullName: '',
+    fullName: user?.fullName || '',
     imageUri: '',
   });
 
@@ -117,11 +120,11 @@ export default function PassportScreen() {
         {passport ? (
           <>
             {/* Pasaport Görseli */}
-            {passport.imageUrl && (
+            {passport.document?.fileUrl && (
               <Card style={styles.imageViewCard}>
                 <Card.Content>
                   <Text style={styles.imageTitle}>Pasaport Görseli</Text>
-                  <Image source={{ uri: passport.imageUrl }} style={styles.passportImageView} />
+                  <Image source={{ uri: passport.document.fileUrl }} style={styles.passportImageView} />
                 </Card.Content>
               </Card>
             )}
@@ -145,7 +148,7 @@ export default function PassportScreen() {
                   <Icon name="account" size={20} color="#757575" />
                   <View style={styles.infoContainer}>
                     <Text style={styles.label}>Ad Soyad</Text>
-                    <Text style={styles.value}>{passport.fullName}</Text>
+                    <Text style={styles.value}>{user?.fullName}</Text>
                   </View>
                 </View>
 
@@ -161,7 +164,9 @@ export default function PassportScreen() {
                   <Icon name="flag" size={20} color="#757575" />
                   <View style={styles.infoContainer}>
                     <Text style={styles.label}>Uyruk</Text>
-                    <Text style={styles.value}>🇹🇷 {passport.nationality}</Text>
+                    <Text style={styles.value}>
+                      {passport.issuingCountry === 'TUR' ? '🇹🇷 Türkiye' : passport.issuingCountry}
+                    </Text>
                   </View>
                 </View>
 
@@ -169,7 +174,9 @@ export default function PassportScreen() {
                   <Icon name="calendar" size={20} color="#757575" />
                   <View style={styles.infoContainer}>
                     <Text style={styles.label}>Geçerlilik Tarihi</Text>
-                    <Text style={styles.value}>{passport.expiryDate}</Text>
+                    <Text style={styles.value}>
+                      {new Date(passport.expiryDate).toLocaleDateString('tr-TR')}
+                    </Text>
                   </View>
                 </View>
               </Card.Content>
@@ -178,12 +185,13 @@ export default function PassportScreen() {
             <Button
               mode="contained"
               onPress={() => {
+                const documentUrl = passport.document?.fileUrl || '';
                 setEditForm({
                   passportNumber: passport.passportNumber || '',
-                  expiryDate: passport.expiryDate || '',
-                  nationality: passport.nationality || 'Türkiye',
-                  fullName: passport.fullName || '',
-                  imageUri: passport.imageUrl || '',
+                  expiryDate: passport.expiryDate?.split('T')[0] || '',
+                  nationality: passport.issuingCountry === 'TUR' ? 'Türkiye' : passport.issuingCountry,
+                  fullName: user?.fullName || '',
+                  imageUri: documentUrl,
                 });
                 setModalVisible(true);
               }}
